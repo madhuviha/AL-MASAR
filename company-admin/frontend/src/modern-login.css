@@ -1,0 +1,311 @@
+/* Selected MASAR dark-glass login. The page background remains controlled by LoginVisual. */
+.secureLogin.productionLogin>.masarLoginCard,
+.authPage.productionAdminLogin>.masarLoginCard{
+  position:relative!important;
+  isolation:isolate;
+  width:min(470px,calc(100vw - 32px))!important;
+  max-width:470px!important;
+  max-height:calc(100dvh - 32px);
+  margin:auto!important;
+  padding:30px 34px 24px!important;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:1px solid rgba(74,229,255,.78)!important;
+  border-radius:26px!important;
+  background:
+    radial-gradient(circle at 92% 8%,rgba(46,206,255,.16),transparent 38%),
+    linear-gradient(150deg,rgba(9,54,78,.96),rgba(1,30,50,.94) 58%,rgba(7,61,81,.94))!important;
+  color:#f5fbff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 0 48px rgba(47,215,255,.08),
+    0 28px 75px rgba(0,11,25,.52),
+    0 0 30px rgba(20,216,255,.13)!important;
+  backdrop-filter:blur(18px) saturate(125%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(125%)!important;
+  animation:masarCardEntrance .48s cubic-bezier(.18,.78,.22,1) both!important;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(77,220,240,.52) transparent;
+}
+.secureLogin.productionLogin>.masarLoginCard::after,
+.authPage.productionAdminLogin>.masarLoginCard::after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  z-index:-1;
+  border:1px solid rgba(82,231,255,.18);
+  border-radius:21px;
+  pointer-events:none;
+  animation:masarCardGlow 2.6s ease-in-out infinite;
+}
+.masarLoginCard::-webkit-scrollbar{width:6px}
+.masarLoginCard::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(77,220,240,.52)}
+
+.secureLogin.productionLogin .masarLoginCard .fleetLoginBadge,
+.authPage.productionAdminLogin .masarLoginCard .fleetLoginBadge{
+  width:min(100%,280px)!important;
+  height:92px!important;
+  max-height:92px!important;
+  margin:0 auto 19px!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 12px 30px rgba(0,12,29,.27),0 0 24px rgba(49,222,255,.12)!important;
+  overflow:hidden!important;
+}
+.secureLogin.productionLogin .masarLoginCard .fleetLoginBadge:not(:has(img)),
+.authPage.productionAdminLogin .masarLoginCard .fleetLoginBadge:not(:has(img)){
+  width:72px!important;
+  background:linear-gradient(145deg,#00d997,#008a5f)!important;
+}
+.masarLoginCard .fleetLoginBadge img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important}
+.masarLoginCard .fleetLoginBadge>svg{width:34px;height:34px;color:white;animation:masarShieldPulse 1.45s ease-in-out infinite}
+
+.secureLogin.productionLogin .masarLoginCard h1,
+.authPage.productionAdminLogin .masarLoginCard h1{
+  margin:0 0 7px!important;
+  color:#fff!important;
+  font-size:30px!important;
+  font-weight:800!important;
+  line-height:1.16!important;
+  letter-spacing:-.6px!important;
+  text-align:center;
+  text-shadow:0 3px 16px rgba(0,0,0,.35);
+}
+.secureLogin.productionLogin .masarLoginCard>p,
+.authPage.productionAdminLogin .masarLoginCard>p{
+  margin:0 0 23px!important;
+  color:#c7dce8!important;
+  font-size:15px!important;
+  line-height:1.5!important;
+  text-align:center;
+}
+.secureLogin.productionLogin .masarLoginCard>label,
+.authPage.productionAdminLogin .masarLoginCard>label{
+  display:block!important;
+  margin:0 0 17px!important;
+  color:#f3f9fc!important;
+  font-size:13px!important;
+  font-weight:750!important;
+}
+.masarLoginCard .loginFieldLabel{margin-bottom:8px;color:#f3f9fc!important}
+.secureLogin.productionLogin .masarLoginCard input,
+.authPage.productionAdminLogin .masarLoginCard input{
+  width:100%!important;
+  height:52px!important;
+  margin-top:7px!important;
+  border:1px solid rgba(196,224,239,.88)!important;
+  border-radius:12px!important;
+  background:#f9fbfd!important;
+  color:#0b2840!important;
+  box-shadow:inset 0 1px 2px rgba(6,36,55,.07)!important;
+  caret-color:#008f64;
+}
+.secureLogin.productionLogin .masarLoginCard .loginInputWrap>input,
+.authPage.productionAdminLogin .masarLoginCard .loginInputWrap>input{margin-top:0!important;padding:0 48px 0 50px!important}
+.masarLoginCard .loginInputWrap{border-radius:12px;transition:filter .18s ease,box-shadow .18s ease}
+.masarLoginCard .loginInputWrap:focus-within{
+  box-shadow:0 0 0 3px rgba(24,230,255,.25),0 0 22px rgba(24,230,255,.34);
+  filter:brightness(1.02);
+}
+.secureLogin.productionLogin .masarLoginCard .loginInputWrap>input:focus,
+.authPage.productionAdminLogin .masarLoginCard .loginInputWrap>input:focus{border-color:#34ddf5!important;box-shadow:none!important;outline:none!important}
+.secureLogin.productionLogin .masarLoginCard .loginInputWrap>svg,
+.authPage.productionAdminLogin .masarLoginCard .loginInputWrap>svg{left:17px!important;width:19px;height:19px;color:#5f7791!important}
+.masarLoginCard .fleetPassword>button{
+  top:50%!important;
+  right:11px!important;
+  width:34px!important;
+  height:34px!important;
+  margin:0!important;
+  color:#607895!important;
+  transform:translateY(-50%);
+}
+.masarLoginCard .fleetPassword>button:hover{color:#008f73!important;background:#e8f8f4!important}
+
+.secureLogin.productionLogin .masarLoginCard .loginSubmit,
+.authPage.productionAdminLogin .masarLoginCard .greenBtn{
+  position:relative;
+  width:100%!important;
+  min-height:54px!important;
+  margin:12px 0 0!important;
+  overflow:hidden;
+  border:1px solid rgba(35,255,196,.9)!important;
+  border-radius:999px!important;
+  background:linear-gradient(100deg,#02d58d 0%,#00aa69 48%,#04734f 100%)!important;
+  color:#fff!important;
+  font-size:16px!important;
+  font-weight:800!important;
+  letter-spacing:.1px;
+  text-shadow:0 1px 3px rgba(0,0,0,.28);
+  box-shadow:0 11px 26px rgba(0,190,126,.25),inset 0 1px 0 rgba(255,255,255,.28)!important;
+  cursor:pointer;
+  transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;
+}
+.secureLogin.productionLogin .masarLoginCard .loginSubmit::before,
+.authPage.productionAdminLogin .masarLoginCard .greenBtn::before{
+  content:"";
+  position:absolute;
+  top:-35%;
+  left:-46%;
+  width:34%;
+  height:170%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);
+  transform:skewX(-22deg);
+  animation:masarButtonShine 2.15s ease-in-out infinite;
+  pointer-events:none;
+}
+.secureLogin.productionLogin .masarLoginCard .loginSubmit:not(:disabled):hover,
+.authPage.productionAdminLogin .masarLoginCard .greenBtn:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.07);box-shadow:0 14px 30px rgba(0,220,144,.34),0 0 20px rgba(23,237,196,.22)!important}
+.secureLogin.productionLogin .masarLoginCard .loginSubmit:disabled,
+.authPage.productionAdminLogin .masarLoginCard .greenBtn:disabled{opacity:.72!important;cursor:wait!important}
+.secureLogin.productionLogin .masarLoginCard .loginSubmit:disabled::before,
+.authPage.productionAdminLogin .masarLoginCard .greenBtn:disabled::before{display:none}
+
+.masarLoginCard .loginSecurityLine{
+  display:grid;
+  grid-template-columns:1fr auto auto 1fr;
+  align-items:center;
+  gap:10px;
+  margin:18px 0 0;
+  color:#e7f9ff;
+  font-size:12px;
+  text-align:center;
+}
+.masarLoginCard .loginSecurityLine>span{height:1px;background:linear-gradient(90deg,transparent,rgba(91,229,248,.68))}
+.masarLoginCard .loginSecurityLine>span:last-child{background:linear-gradient(90deg,rgba(91,229,248,.68),transparent)}
+.masarLoginCard .loginSecurityLine>svg{width:24px;height:24px;color:#11f0e8;filter:drop-shadow(0 0 7px rgba(17,240,232,.7));animation:masarShieldPulse 1.45s ease-in-out infinite}
+.masarLoginCard .loginSecurityLine>b{font-weight:750}
+
+.masarLoginCard .loginAppLinks{gap:9px;margin-top:17px;padding-top:0;border-top:0}
+.masarLoginCard .appStoreBadge{min-height:39px;border:1px solid #28dce5;border-radius:8px;background:#071018;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+.masarLoginCard .loginSupportLinks{gap:7px;margin-top:14px;flex-wrap:wrap}
+.masarLoginCard .supportLink{
+  flex:1 1 auto;
+  justify-content:center;
+  min-height:32px;
+  padding:6px 8px;
+  border-color:rgba(55,225,238,.78);
+  background:rgba(4,38,57,.48);
+  color:#e9fbff;
+  font-size:10px;
+  box-shadow:inset 0 0 12px rgba(33,212,240,.04);
+}
+.masarLoginCard .supportLink:hover{background:rgba(24,211,197,.16);border-color:#4ff4f3;color:#fff}
+.masarLoginCard .supportLink svg{color:#2aeee6}
+.masarLoginCard .loginBrandText.bottom{margin-top:15px;color:#d6e8f1!important;opacity:.86;font-size:10px}
+.masarLoginCard .loginCaptcha{margin:4px 0 0}
+.masarLoginCard .loginError,
+.masarLoginCard .authError{margin:0 0 12px!important;border-color:rgba(255,123,135,.55)!important;background:rgba(104,15,28,.76)!important;color:#fff!important}
+
+@keyframes masarCardEntrance{from{opacity:0;transform:translateY(18px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes masarCardGlow{0%,100%{box-shadow:inset 0 0 12px rgba(37,225,255,.04)}50%{box-shadow:inset 0 0 28px rgba(37,225,255,.15)}}
+@keyframes masarShieldPulse{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.09);opacity:1}}
+@keyframes masarButtonShine{0%,35%{left:-46%;opacity:0}50%{opacity:1}72%,100%{left:116%;opacity:0}}
+
+@media(max-width:560px){
+  .secureLogin.productionLogin>.masarLoginCard,
+  .authPage.productionAdminLogin>.masarLoginCard{width:calc(100vw - 20px)!important;max-height:calc(100dvh - 20px);padding:22px 18px 20px!important;border-radius:21px!important}
+  .secureLogin.productionLogin .masarLoginCard .fleetLoginBadge,
+  .authPage.productionAdminLogin .masarLoginCard .fleetLoginBadge{width:min(100%,245px)!important;height:78px!important;max-height:78px!important;margin-bottom:15px!important}
+  .secureLogin.productionLogin .masarLoginCard h1,
+  .authPage.productionAdminLogin .masarLoginCard h1{font-size:25px!important}
+  .secureLogin.productionLogin .masarLoginCard>p,
+  .authPage.productionAdminLogin .masarLoginCard>p{margin-bottom:18px!important;font-size:13px!important}
+  .secureLogin.productionLogin .masarLoginCard input,
+  .authPage.productionAdminLogin .masarLoginCard input{height:48px!important}
+  .secureLogin.productionLogin .masarLoginCard .loginSubmit,
+  .authPage.productionAdminLogin .masarLoginCard .greenBtn{min-height:50px!important}
+  .masarLoginCard .loginSecurityLine{margin-top:15px}
+}
+@media(max-height:760px) and (min-width:561px){
+  .secureLogin.productionLogin>.masarLoginCard,
+  .authPage.productionAdminLogin>.masarLoginCard{padding-top:22px!important;padding-bottom:20px!important}
+  .secureLogin.productionLogin .masarLoginCard .fleetLoginBadge,
+  .authPage.productionAdminLogin .masarLoginCard .fleetLoginBadge{height:72px!important;max-height:72px!important;margin-bottom:12px!important}
+  .secureLogin.productionLogin .masarLoginCard>p,
+  .authPage.productionAdminLogin .masarLoginCard>p{margin-bottom:16px!important}
+  .secureLogin.productionLogin .masarLoginCard>label,
+  .authPage.productionAdminLogin .masarLoginCard>label{margin-bottom:12px!important}
+  .masarLoginCard .loginSecurityLine{margin-top:14px}
+  .masarLoginCard .loginAppLinks{margin-top:12px}
+  .masarLoginCard .loginSupportLinks{margin-top:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .secureLogin.productionLogin>.masarLoginCard,
+  .authPage.productionAdminLogin>.masarLoginCard,
+  .secureLogin.productionLogin>.masarLoginCard::after,
+  .authPage.productionAdminLogin>.masarLoginCard::after,
+  .masarLoginCard .fleetLoginBadge>svg,
+  .masarLoginCard .loginSecurityLine>svg,
+  .secureLogin.productionLogin .masarLoginCard .loginSubmit::before,
+  .authPage.productionAdminLogin .masarLoginCard .greenBtn::before{animation:none!important}
+}
+
+/* High-contrast MASAR login override: keep the selected background and popup motion, but make every login label readable. */
+.secureLogin.productionLogin,.authPage.productionAdminLogin{
+  background-image:linear-gradient(rgba(4,24,40,.34),rgba(4,24,40,.34)),url('/inviha-api/api/public/login-background')!important;
+  background-color:#123449!important;
+}
+.secureLogin.productionLogin>.masarLoginCard,
+.authPage.productionAdminLogin>.masarLoginCard{
+  --masar-login-contrast:1;
+  background:
+    radial-gradient(circle at 92% 8%,rgba(62,206,255,.12),transparent 38%),
+    linear-gradient(150deg,rgba(255,255,255,.96),rgba(236,248,252,.95) 58%,rgba(224,243,249,.95))!important;
+  color:#0b2748!important;
+  border-color:rgba(66,194,220,.82)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 0 48px rgba(47,181,211,.08),
+    0 28px 75px rgba(0,20,42,.34),
+    0 0 30px rgba(20,190,220,.16)!important;
+}
+.secureLogin.productionLogin .masarLoginCard h1,
+.authPage.productionAdminLogin .masarLoginCard h1{
+  color:#0b2748!important;
+  text-shadow:0 1px 2px rgba(255,255,255,.7)!important;
+}
+.secureLogin.productionLogin .masarLoginCard>p,
+.authPage.productionAdminLogin .masarLoginCard>p{
+  color:#47657d!important;
+}
+.secureLogin.productionLogin .masarLoginCard>label,
+.authPage.productionAdminLogin .masarLoginCard>label,
+.masarLoginCard .loginFieldLabel{
+  color:#0b2748!important;
+  font-weight:800!important;
+}
+.masarLoginCard .loginSecurityLine{color:#15516b!important}
+.masarLoginCard .loginSecurityLine>span{background:linear-gradient(90deg,transparent,rgba(32,156,181,.62))}
+.masarLoginCard .loginSecurityLine>span:last-child{background:linear-gradient(90deg,rgba(32,156,181,.62),transparent)}
+.masarLoginCard .loginSecurityLine>svg{color:#00a7ae!important;filter:drop-shadow(0 0 6px rgba(0,167,174,.34))}
+.masarLoginCard .supportLink{
+  background:rgba(255,255,255,.72)!important;
+  color:#174b67!important;
+  border-color:rgba(39,177,197,.72)!important;
+}
+.masarLoginCard .supportLink:hover{background:rgba(255,255,255,.95)!important;color:#0b2748!important}
+.masarLoginCard .loginBrandText.bottom{color:#365a72!important;opacity:1!important}
+
+/* Use the supplied official store artwork instead of text-only badges. */
+.masarLoginCard .loginAppLinks .appStoreBadge{
+  display:block!important;
+  flex:0 0 142px!important;
+  width:142px!important;
+  height:48px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  overflow:hidden!important;
+  box-shadow:0 5px 14px rgba(0,18,35,.2)!important;
+  transition:transform .18s ease,filter .18s ease!important;
+}
+.masarLoginCard .loginAppLinks .appStoreBadge img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+.masarLoginCard .loginAppLinks .appStoreBadge:hover{transform:translateY(-1px);filter:brightness(1.06)}

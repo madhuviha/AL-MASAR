@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {anniversary,companyDates} from '../company-dates.mjs';
+import {evaluateGeofences,validGeofence} from '../geofences.mjs';
+assert.equal(anniversary('2024-02-29'),'2025-02-28');assert.equal(anniversary('2026-09-12'),'2027-09-12');assert.throws(()=>anniversary('2026-02-30'));assert.equal(companyDates({created:'2026-09-12',expiry:'2028-09-12'}).expiry,'2028-09-12');assert.throws(()=>companyDates({created:'2026-09-12',expiry:'2025-09-12'}));
+const now=Date.now(),zone={id:'g',companyId:1,name:'Najma',type:'circle',lat:25,lng:51,radius:500,active:true,entryAlert:true,exitAlert:true,overspeedAlert:true,speedLimit:50,cooldownMinutes:2,vehicleIds:['1']},store={localGeofences:[zone],drivers:[{id:'d',assignedVehicleId:1,name:'Driver'}]},v={id:1,name:'Car',state:'moving',speed:65,position:{latitude:25,longitude:51,serverTime:new Date(now).toISOString(),valid:true}};
+let state={},events=[];const run=(vehicle=v,time=now,co=1)=>evaluateGeofences(store,{id:co},[vehicle],state,(...a)=>events.push(a),time);
+state=run();assert.equal(events.length,1);assert.equal(events[0][2],'Geofence Overspeed');assert.equal(events[0][5].driverName,'Driver');run();assert.equal(events.length,1);
+run({...v,position:{...v.position,serverTime:new Date(now+60000).toISOString()}},now+60000);assert.equal(events.length,1);
+run({...v,position:{...v.position,serverTime:new Date(now+121000).toISOString()}},now+121000);assert.equal(events.length,2);
+run({...v,position:{...v.position,latitude:26,serverTime:new Date(now+122000).toISOString()}},now+122000);assert.equal(events.at(-1)[2],'Geofence Exit');
+const count=events.length;run(v,now,2);run({...v,id:2});run({...v,position:{...v.position,serverTime:new Date(now-200000).toISOString()}});assert.equal(events.length,count);
+assert.ok(validGeofence({...zone,type:'polygon',points:[[25,51],[25,51],[25,51]]}));
+const polygon={...zone,type:'polygon',points:[[24,50],[26,50],[26,52],[24,52]]};assert.equal(validGeofence(polygon),'');
+const polygonEvents=[];evaluateGeofences({...store,localGeofences:[polygon]},{id:1},[v],{},(...a)=>polygonEvents.push(a),now);assert.equal(polygonEvents.length,1);
+console.log('Company dates, circle/polygon speed rules, cooldown, stale GPS and tenant/vehicle scope passed.');

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {idleEvents,reportRange,reportSummary} from '../report-metrics.mjs';
+import {engineState} from '../../company-admin/frontend/src/telemetry-state.mjs';
+const events=[120000,121000,119000,240000].map(duration=>({type:'Idle',duration}));
+assert.deepEqual(idleEvents(events).map(x=>x.duration),[121000,240000]);
+assert.throws(()=>idleEvents(events,-1));
+const summary=reportSummary([{durationSeconds:121},{durationSeconds:240}],{type:'Idle Report',vehicles:[1,2]});
+assert.equal(summary.totalIdleSeconds,361);assert.equal(summary.averageIdleSeconds,180.5);assert.equal(summary.vehicleCount,2);
+assert.equal(+reportRange('2026-09-12T08:00','2026-09-12T10:00').end-+reportRange('2026-09-12T08:00','2026-09-12T10:00').start,7200000);
+assert.equal(engineState({telemetry:{fresh:true,sampleTime:1000,engineRunning:true}},122000),null);
+assert.equal(engineState({telemetry:{fresh:true,sampleTime:1000,engineRunning:true}},2000),true);
+assert.equal(engineState({attributes:{ignition:false},telemetry:{fresh:false,sampleTime:1000,engineRunning:null}},200000),false);
+console.log('Strict idle boundary, shared summary, datetime ranges and stale engine checks passed.');

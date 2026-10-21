@@ -1,0 +1,7 @@
+import React,{useState} from 'react';
+import {authToken} from './api';
+export default function VehicleImageEditor({vehicleId,initial,onDone,toast}){
+ const [image,setImage]=useState(initial),[busy,setBusy]=useState(false);
+ async function save(){setBusy(true);try{const r=await fetch('/inviha-api/api/vehicles/'+encodeURIComponent(vehicleId)+'/image',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+authToken()},body:JSON.stringify({imageUrl:image})});if(!r.ok)throw Error();window.dispatchEvent(new Event('inviha-refresh'));toast('Vehicle image saved');onDone()}catch{toast('Unable to save image. Check administrator access and try again.')}finally{setBusy(false)}}
+ return <div className="vehiclePhotoEditor"><h3>Vehicle image</h3><label>Image URL<input type="url" value={image.startsWith('data:')?'':image} placeholder="https://example.com/vehicle.jpg" onChange={e=>setImage(e.target.value)}/></label><label>Upload from laptop<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>{const file=e.target.files?.[0];if(!file)return;if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>250000){toast('Choose PNG, JPEG or WebP under 250 KB.');return}const reader=new FileReader();reader.onload=()=>setImage(String(reader.result));reader.readAsDataURL(file)}}/></label>{image&&<img src={image} alt="Vehicle image preview"/>}<div><button onClick={onDone}>Cancel</button><button disabled={busy} onClick={save}>{busy?'Saving…':'Save image'}</button></div></div>
+}

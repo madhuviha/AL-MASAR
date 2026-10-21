@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import {deriveTelemetry} from '../telemetry.mjs';
+const now=Date.now(),sample=(attributes,time=now,speed=0)=>({attributes,speed,servertime:new Date(time).toISOString(),devicetime:new Date(time).toISOString()});
+assert.equal(deriveTelemetry(sample({ignition:true})).engineRunning,null);
+assert.equal(deriveTelemetry(sample({ignition:true,rpm:0})).engineRunning,false);
+assert.equal(deriveTelemetry(sample({ignition:true,rpm:800})).engineRunning,true);
+assert.equal(deriveTelemetry(sample({ignition:true,engineRunning:false})).engineRunning,false);
+assert.equal(deriveTelemetry(sample({ignition:false})).engineRunning,false);
+const config={accuracy:{engineVoltageEnabled:true,engineVoltageOn:13.5,engineVoltageOff:12.8,engineDebounceSeconds:10}};
+let p=deriveTelemetry(sample({ignition:true,power:14}),config,{},now);assert.equal(p.engineRunning,null);
+p=deriveTelemetry(sample({ignition:true,power:14}),config,p,now+10000);assert.equal(p.engineRunning,null,'same sample must not advance debounce');
+p=deriveTelemetry(sample({ignition:true,power:14},now+11000),config,p,now+11000);assert.equal(p.engineRunning,true);
+p=deriveTelemetry(sample({ignition:true,power:13.2},now+12000),config,p,now+12000);assert.equal(p.engineRunning,true,'hysteresis retains state in the band');
+p=deriveTelemetry(sample({ignition:true,power:12.2},now+13000),config,p,now+13000);assert.equal(p.engineRunning,true,'debounce holds old state');
+p=deriveTelemetry(sample({ignition:true,power:12.2},now+24000),config,p,now+24000);assert.equal(p.engineRunning,false);
+assert.equal(deriveTelemetry(sample({ignition:true,power:14}),{},{}).engineRunning,null,'no universal voltage fallback');
+assert.equal(deriveTelemetry(sample({ignition:true,rpm:900},now-180000),{}, {},now).engineRunning,null,'stale engine unknown');
+assert.equal(deriveTelemetry(sample({ignition:false},now-180000),{}, {},now).engineRunning,false,'last confirmed ignition OFF keeps engine OFF');
+let stopped=deriveTelemetry(sample({ignition:true},now,10),{}, {},now);stopped=deriveTelemetry(sample({ignition:true},now+10000,0),{},stopped,now+10000);assert.equal(stopped.stoppedSince,now+10000);assert.equal(stopped.stopStartObserved,true);
+stopped=deriveTelemetry(sample({ignition:true},now+86400000,0),{},stopped,now+86400000);assert.equal(stopped.stoppedSince,now+86400000,'unobserved gap starts a new observation');assert.equal(stopped.stopStartObserved,false);
+stopped=deriveTelemetry(sample({ignition:true},now+86410000,10),{},stopped,now+86410000);assert.equal(stopped.stoppedSince,null);
+console.log('Engine signals, key-on/off distinction, voltage hysteresis/debounce, stale data and persistent stops passed.');
+
+assert.equal(deriveTelemetry({...sample({rpm:900}),fixTime:new Date(now-3600000).toISOString()},{},{},now).engineRunning,true,'fresh IO survives an older GPS fix');
+let continuous=deriveTelemetry(sample({ignition:true},now,10),{},{},now);
+continuous=deriveTelemetry(sample({ignition:true},now+1000,0),{},continuous,now+1000);
+for(let t=now+61000;t<now+86400000;t+=60000)continuous=deriveTelemetry(sample({ignition:true},t,0),{},continuous,t);
+assert.equal(continuous.stoppedSince,now+1000,'continuous observations survive midnight');

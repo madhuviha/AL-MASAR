@@ -1,0 +1,18 @@
+[Unit]
+Description=INVIHA Tracker Device Admission Gateway
+After=network.target docker.service inviha-backend.service
+Requires=docker.service inviha-backend.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/inviha-backend
+ExecStart=/usr/bin/node device-admission-gateway.mjs
+Restart=always
+RestartSec=3
+TimeoutStopSec=8
+KillMode=mixed
+Environment=NODE_ENV=production
+User=root
+
+[Install]
+WantedBy=multi-user.target

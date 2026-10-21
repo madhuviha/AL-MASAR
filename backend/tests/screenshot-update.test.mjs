@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {recentAlerts,ALERT_RETENTION_MS} from '../alert-retention.mjs';
+import {immobilizerCommand} from '../immobilizer.mjs';
+import {behaviourMetrics} from '../driver-behaviour.mjs';
+const now=Date.parse('2026-09-13T12:00:00Z');
+test('retention removes resolved and new at 48 hours, handles offsets, keeps invalid dates',()=>{assert.deepEqual(recentAlerts([{createdAt:new Date(now-ALERT_RETENTION_MS).toISOString(),status:'New'},{createdAt:'2026-09-11T14:00:00+03:00',status:'Resolved'},{createdAt:new Date(now-1).toISOString()},{createdAt:'unknown'}],now).map(x=>x.createdAt),[new Date(now-1).toISOString(),'unknown'])});
+const vehicle={protocol:'Teltonika',device_model:'FMB120',traccar_device_id:2,metadata:{immobilizer:{enabled:true,output:2,immobilizeLevel:1}}};
+const position={speed:0,deviceTime:new Date(now-1000).toISOString(),serverTime:new Date(now-1000).toISOString(),attributes:{ignition:false}};
+test('FMB120 DOUT2 commands use the two-output Teltonika mask and preserve DOUT1',()=>{assert.equal(immobilizerCommand(vehicle,position,'on',now).attributes.data,'setdigout ?1');assert.equal(immobilizerCommand(vehicle,position,'off',now).attributes.data,'setdigout ?0')});
+test('active-low FMB120 configuration sends DOUT2 0 to immobilize and 1 to release',()=>{const activeLow={...vehicle,metadata:{immobilizer:{enabled:true,output:2,immobilizeLevel:0}}};assert.equal(immobilizerCommand(activeLow,position,'on',now).attributes.data,'setdigout ?0');assert.equal(immobilizerCommand(activeLow,position,'off',now).attributes.data,'setdigout ?1')});
+test('three-output Teltonika models preserve both unaffected outputs',()=>{const three={...vehicle,device_model:'FMC130'};assert.equal(immobilizerCommand(three,position,'on',now).attributes.data,'setdigout ?1?')});
+test('immobilizer rejects unknown relay, GT06, movement, stale and ignition ON',()=>{for(const [v,p] of [[{...vehicle,protocol:'GT06'},position],[{...vehicle,metadata:{}},position],[vehicle,{...position,speed:5}],[vehicle,{...position,attributes:{ignition:true}}],[vehicle,{...position,deviceTime:new Date(now-31000).toISOString()}]])assert.throws(()=>immobilizerCommand(v,p,'on',now))});
+test('behaviour uses distinct recorded events and leaves zero distance unrated',()=>{const events=[{id:1,type:'alarm',attributes:{alarm:'hardBraking'}},{id:1,type:'alarm',attributes:{alarm:'hardBraking'}},{id:2,type:'deviceOverspeed'}];assert.equal(behaviourMetrics(events,100).rag,'Amber');assert.equal(behaviourMetrics(events,100).harshBraking,1);assert.equal(behaviourMetrics([],0).rag,'Not rated')});

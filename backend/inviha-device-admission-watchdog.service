@@ -1,0 +1,7 @@
+[Unit]
+Description=Verify INVIHA tracker admission gateway
+After=network.target docker.service inviha-backend.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/inviha-device-admission-watchdog

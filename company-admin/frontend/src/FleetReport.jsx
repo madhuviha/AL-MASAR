@@ -1,0 +1,16 @@
+import React from 'react';
+import {reportCellValue,reportColumns,reportDefinition,reportLegend,reportMetrics,reportRowTone} from './report-presentation.mjs';
+import './fleet-report.css';
+
+const idleTone=minutes=>Number(minutes)>=60?'red':Number(minutes)>=20?'amber':'green';
+
+export default function FleetReport({rows,summary}){
+ const type=summary?.type||'Fleet Report',definition=reportDefinition(type),stationary=['Idle Report','Stops Report'].includes(definition.type),metrics=reportMetrics(rows,summary),columns=reportColumns(rows,type),legend=reportLegend(type),durations=rows.map(row=>Number(row.durationMin)).filter(Number.isFinite),maximumDuration=durations.length?Math.max(...durations):0;
+ return <div className="fleetReport">
+  <header className="fleetReportHead">{summary?.companyLogo?<img src={summary.companyLogo} alt={`${summary?.companyName||'Company'} logo`}/>:<div className="fleetReportLogoFallback">MASAR<br/><small>TRACKING</small></div>}<div><p>{summary?.companyName||'Fleet Management'}</p><h2>{definition.title}</h2><span>{summary?.companyAddress||'Company address not configured'}</span><small>{definition.subtitle}</small></div><aside><b>Report period</b><span>{String(summary?.from||'Not configured').replace('T',' ')}</span><span>to {String(summary?.to||'Not configured').replace('T',' ')}</span></aside></header>
+  <section className="fleetReportMetrics">{metrics.map(item=><div className={`tone-${item.tone}${item.supported?'':' metricUnavailable'}`} key={item.key}><span>{item.label}</span><strong>{item.value}</strong></div>)}</section>
+  <section className="fleetReportLegend" aria-label="Report colour legend"><b>Colour labels</b>{legend.map(item=><span key={`${item.tone}-${item.label}`}><i className={`tone-${item.tone}`}/>{item.label}</span>)}</section>
+  {stationary&&durations.length>0&&<section className="idleAnalysis"><div><h3>{definition.type==='Idle Report'?'Idle':'Stop'} duration overview</h3><p>Longest recorded periods in this report. Colours follow the duration labels above.</p></div><div className="idleBars">{rows.filter(row=>Number.isFinite(Number(row.durationMin))).slice(0,10).map((row,index)=>{const mins=Number(row.durationMin)||0;return <div key={index}><span>{row.vehicle||`Vehicle ${index+1}`}</span><i><b className={`tone-${idleTone(mins)}`} style={{width:`${Math.max(4,Math.min(100,maximumDuration?mins/maximumDuration*100:0))}%`}}/></i><strong className={`toneText-${idleTone(mins)}`}>{mins.toFixed(mins<10?1:0)} min</strong></div>})}</div></section>}
+  <section className="fleetReportTable"><div><h3>Detailed records</h3><span>{rows.length} record{rows.length===1?'':'s'}</span></div>{rows.length?<div className="fleetReportTableScroll"><table><thead><tr>{columns.map(column=><th key={column.key}>{column.label}</th>)}</tr></thead><tbody>{rows.map((row,index)=><tr key={index}>{columns.map(column=>{const tone=reportRowTone(type,column.key,row[column.key],row),value=reportCellValue(type,column.key,row[column.key],row);return <td key={column.key}>{tone?<span className={`reportBadge tone-${tone}`}>{value}</span>:value}</td>})}</tr>)}</tbody></table></div>:<p className="fleetReportEmpty">No recorded data matches the selected vehicles and period.</p>}</section>
+ </div>;
+}

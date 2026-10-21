@@ -1,0 +1,90 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install backend dependencies",
+      "type": "shell",
+      "command": "npm install",
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Company portal dependencies",
+      "type": "shell",
+      "command": "npm ci",
+      "options": { "cwd": "${workspaceFolder}/company-admin/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Super Admin dependencies",
+      "type": "shell",
+      "command": "npm ci",
+      "options": { "cwd": "${workspaceFolder}/super-admin/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install all dependencies",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Install backend dependencies",
+        "Install Company portal dependencies",
+        "Install Super Admin dependencies"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Run backend",
+      "type": "shell",
+      "command": "npm start",
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Company portal",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/company-admin/frontend" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Super Admin portal",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/super-admin/frontend" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Super Admin",
+      "type": "shell",
+      "command": "npm test",
+      "options": { "cwd": "${workspaceFolder}/super-admin/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Company portal",
+      "type": "shell",
+      "command": "npm run build",
+      "options": { "cwd": "${workspaceFolder}/company-admin/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Super Admin portal",
+      "type": "shell",
+      "command": "npm run build",
+      "options": { "cwd": "${workspaceFolder}/super-admin/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build both portals",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Build Company portal",
+        "Build Super Admin portal"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

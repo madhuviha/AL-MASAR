@@ -1,0 +1,20 @@
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE auth_users ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+CREATE TABLE IF NOT EXISTS platform_state(id INTEGER PRIMARY KEY CHECK(id=1),data JSONB NOT NULL DEFAULT '{}'::jsonb,version BIGINT NOT NULL DEFAULT 1,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+
+CREATE TABLE IF NOT EXISTS device_inventory(traccar_id BIGINT PRIMARY KEY,metadata JSONB NOT NULL DEFAULT '{}'::jsonb);
+CREATE TABLE IF NOT EXISTS rule_engine_state (
+ company_id BIGINT PRIMARY KEY REFERENCES companies(id),
+ data JSONB NOT NULL DEFAULT '{}'::jsonb,
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS scheduled_report_runs (
+ id BIGSERIAL PRIMARY KEY,
+ company_id BIGINT NOT NULL REFERENCES companies(id),
+ schedule_id TEXT NOT NULL,
+ period TEXT NOT NULL,
+ data JSONB NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ UNIQUE(company_id,schedule_id,period)
+);

@@ -1,0 +1,16 @@
+[Unit]
+Description=INVIHA Track Backend
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/inviha-backend
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=3
+Environment=NODE_ENV=production
+User=root
+
+[Install]
+WantedBy=multi-user.target

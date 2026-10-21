@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "INVIHA TRACK",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/*.tgz": true,
+      "**/*-package": true,
+      "**/*-package/**": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/deployment/**": true,
+      "**/*-package/**": true
+    },
+    "files.watcherExclude": {
+      "**/node_modules/**": true,
+      "**/dist/**": true
+    },
+    "editor.formatOnSave": false,
+    "terminal.integrated.defaultProfile.windows": "PowerShell"
+  }
+}

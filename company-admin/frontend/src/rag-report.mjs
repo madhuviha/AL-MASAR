@@ -1,0 +1,5 @@
+export const ragColumns=[['vehicle','Vehicle'],['driver','Driver'],['distanceKm','Distance (km)'],['harshAcceleration','Acceleration'],['harshBraking','Braking'],['harshCornering','Cornering'],['overspeedEvents','Overspeed'],['eventsPer100Km','Events / 100 km'],['rag','RAG rating']];
+export const ragColor={Red:'DC3545',Amber:'D98000',Green:'079B58','Not rated':'738396'};
+export function ragSummary(rows){const counts={Red:0,Amber:0,Green:0,'Not rated':0};let distance=0,events=0;for(const r of rows){counts[Object.hasOwn(counts,r.rag)?r.rag:'Not rated']++;distance+=Number(r.distanceKm)||0;for(const k of ['harshAcceleration','harshBraking','harshCornering','overspeedEvents'])events+=Number(r[k])||0}return {counts,distance,events,total:rows.length,assessed:rows.length-counts['Not rated']}}
+export function ragCell(r,k){if(k==='distanceKm')return Number(r[k]||0).toFixed(1);if(k==='eventsPer100Km')return typeof r[k]==='number'?r[k].toFixed(2):'Not rated';return r[k]??'—'}
+export const ragLegend='Events per 100 km: Green < 2 | Amber 2 to < 5 | Red >= 5. No distance: Not rated.';

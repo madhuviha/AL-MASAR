@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {routePoints,summarize} from '../../company-admin/frontend/src/history.mjs';
+import {calibrate} from '../../company-admin/frontend/src/calibration.mjs';
+import {evaluateAlerts} from '../rules.mjs';
+const point=(time,extra={})=>({latitude:0,longitude:0,fixTime:new Date(time).toISOString(),speed:0,attributes:{},...extra});
+test('route retains valid zero coordinates and rejects invalid fixes',()=>{assert.equal(routePoints([point(0),point(1000,{valid:false}),point(2000,{latitude:91}),point(0)]).length,1)});
+test('route gaps are excluded from mileage and mark separate segments',()=>{const s=summarize([point(0),point(600000,{longitude:1})]);assert.equal(s.meters,0);assert.equal(s.segments.length,2);assert.equal(s.events.filter(e=>e.type==='GPS history gap').length,1)});
+test('idle and ignition transitions use actual telemetry',()=>{const s=summarize([point(0,{attributes:{ignition:true}}),point(60000,{attributes:{ignition:false}})]);assert.equal(s.events.filter(e=>e.type==='Ignition false').length,1);assert.equal(s.events.some(e=>e.type==='Idle'),true)});
+test('missing sensor telemetry is never zero or OFF',()=>{assert.equal(calibrate(null,{scale:2}),null);assert.equal(calibrate(0,{type:'Digital Input'}),false);assert.equal(calibrate(1,{type:'Digital Output',invert:true}),false);assert.equal(calibrate(5,{scale:2,offset:1}),11)});
+test('calibration refuses values outside calibration bounds',()=>{assert.equal(calibrate(30,{calibrationPoints:[{raw:0,value:0},{raw:10,value:100}]}),null)});
+const company={id:1},vehicle={id:7,name:'Truck',state:'parked',speed:0,position:{latitude:25,longitude:51,attributes:{}}};
+const state=type=>({alerts:[],drivers:[],localGeofences:[],alertRules:[{id:'r',companyId:1,enabled:true,type,vehicleIds:['7']}],ruleRuntime:{},geofenceRuntime:{}});
+test('missing battery and external power never create alerts',()=>{for(const type of ['Low Battery','Power Disconnected'])assert.equal(evaluateAlerts(state(type),company,[vehicle]).alerts.length,0)});
+test('persistent runtime prevents repeated alert while condition remains true',()=>{const first=evaluateAlerts(state('Ignition ON'),company,[{...vehicle,position:{...vehicle.position,attributes:{ignition:true}}}]);assert.equal(first.alerts.length,1);assert.equal(evaluateAlerts(first,company,[{...vehicle,position:{...vehicle.position,attributes:{ignition:true}}}]).alerts.length,1)});
+test('offline vehicle cannot generate stale ignition event',()=>{assert.equal(evaluateAlerts(state('Ignition ON'),company,[{...vehicle,state:'offline',position:{...vehicle.position,attributes:{ignition:true}}}]).alerts.length,0)});

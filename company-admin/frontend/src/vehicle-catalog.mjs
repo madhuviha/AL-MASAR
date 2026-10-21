@@ -1,0 +1,11 @@
+import atlas from './assets/ui/vehicle-atlas.jpeg';
+// Original supplied atlas, displayed through SVG viewports; no image re-encoding.
+const entries=[
+ ['Car',18,112,94,168],['Pickup',136,105,100,175],['Van',264,101,99,179],['Truck',397,94,97,185],['Trailer',524,90,107,192],['Bus',662,91,104,190],['Mini Bus',793,99,102,181],['Motorcycle',920,116,94,162],['Scooter',1046,113,100,164],['Auto',1197,111,112,163],['Taxi',1338,112,99,166],
+ ['Ambulance',18,344,96,188],['Fire Truck',134,342,106,190],['Police',266,357,100,174],['Tanker',393,343,99,191],['Container Truck',520,342,101,191],['Refrigerated Truck',648,348,101,187],['Garbage Truck',771,346,95,188],['Tow Truck',894,350,103,185],['Flatbed',1003,354,99,181],['Cement Mixer',1215,351,90,183],['Crane Truck',1332,345,114,190],
+ ['Excavator',8,582,118,190],['Bulldozer',139,607,108,166],['Loader',270,615,112,157],['Backhoe',411,595,96,178],['Grader',545,596,100,178],['Roller',674,613,94,161],['Forklift',804,608,88,164],['Dump Truck',927,609,95,165],['Telehandler',1047,588,135,188],['Skid Steer',1194,635,87,136],['Harvester',1305,594,130,180],
+ ['Tractor',15,850,96,121],['Agri Trailer',133,846,100,125],['Boat',245,829,79,143],['Yacht',356,821,87,152],['Jet Ski',480,847,70,123],['Helicopter',568,824,116,149],['Aircraft',689,831,116,142],['Generator',827,852,109,115],['Light Tower',959,836,98,136],['Compressor',1084,857,122,112],['Trailer Asset',1235,838,89,130],['Container Asset',1350,836,87,133]
+];
+export const vehicleCategories=entries.map(x=>x[0]);
+const aliases={'bike':'Motorcycle','mini bus':'Mini Bus','emergency':'Ambulance','heavy equipment':'Excavator','container':'Container Truck','reefer':'Refrigerated Truck','garbage':'Garbage Truck','trailer (asset)':'Trailer Asset','container (asset)':'Container Asset'};
+export function vehicleAtlasSvg(category){const key=String(category||'Car').toLowerCase();const row=entries.find(x=>x[0].toLowerCase()===(aliases[key]||key).toLowerCase());if(!row)return null;const [,x,y,w,h]=row;return `<svg class="map-vehicle-svg atlas-vehicle" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><svg x="0" y="0" width="${w}" height="${h}" viewBox="${x} ${y} ${w} ${h}" style="overflow:hidden"><image href="${atlas}" width="1459" height="1078"/></svg></svg>`;}

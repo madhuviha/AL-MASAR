@@ -1,0 +1,26 @@
+INVIHA TRACK complete production update
+Company Admin production build: PASS
+Super Admin production build: PASS
+Backend regression and telemetry: 36 PASS
+Device profiles, mappings, company fields and ignition stops: 30 PASS
+Driver integration and byte-equivalent RFID/iButton handling: 29 PASS
+Installer safeguards and syntax: 30 PASS
+Reviewed live server, rules, telemetry, device-profile and portal baselines: PASS
+Sensors & I/O management: Add, Edit, Delete, on-demand physical I/O mapping and collapsed automatic readings: PASS
+Alerts: selectable event history, bulk deletion, unique active-rule table and searchable all-vehicle rule targeting: PASS
+Live map: readable vehicle cards, one visible vertical-dots action, anchored popup, labels hidden by default and initial focus excludes stale offline outliers: PASS
+Map markers: selected vehicle category, tracker heading rotation, transparent background and full moving/idle/parked/untracked/offline status colors: PASS
+Vehicle editor: duplicate Sensors & I/O tab removed; sensor management remains on the dedicated Sensors page: PASS
+Header and overlays: global header search removed; modal sizing, stacking and viewport alignment verified: PASS
+Runtime repair: shared MoreHorizontal icon restored for map tools, geofences and other existing pages: PASS
+Engine status: confirmed ignition OFF displays Engine OFF; ignition ON retains configured voltage thresholds, hysteresis and debounce: PASS
+Sensor setup: Engine (Voltage) template saves source key, ON/OFF thresholds and debounce to selected vehicles: PASS
+Fleet speed: company setting feeds all vehicle live signs, trails, playback and backend rule fallback with explicit overrides preserved: PASS
+Loading experience: supplied animated SVG appears centered after a short delay; old bottom loading card removed: PASS
+Automatic live refresh: retains last received positions and retries quietly without a persistent global toast: PASS
+Reverse geocoding: prefers street, building, intersection or nearby-place results before a Google Plus Code fallback: PASS
+Popup layout: fixed header, one scrollable body, non-overlapping action footer, equal desktop columns and single-column mobile layout: PASS
+Driver form: aligned photo/basic-information row, full-width identifier/work/duty/notes sections and left-aligned duty control: PASS
+Driver photo: PNG/JPEG/WebP selection, zoom, horizontal/vertical crop, 512x512 JPEG output, recrop and remove controls: PASS
+Local production visual verification: card layout, visible action dots, Doha map focus and adjacent action popup PASS
+Live installation, DNS/firewall and physical tracker connectivity: PENDING user-run deployment and hardware verification
