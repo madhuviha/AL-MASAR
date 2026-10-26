@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Engine with lightning</title>
+  <g fill="currentColor">
+    <rect x="99" y="30" width="88" height="29" rx="10"/>
+    <rect x="126" y="58" width="34" height="24"/>
+    <path d="M96 80h112q8 0 8 8v22h10v28h10v30h-10v13l-45 45H96l-32-32H40v-26H30v-30h10v-27h25l31-31h0Z"/>
+    <rect x="0" y="109" width="30" height="88" rx="10"/>
+    <rect x="226" y="109" width="30" height="88" rx="10"/>
+    <rect x="24" y="138" width="27" height="30"/>
+    <rect x="205" y="138" width="27" height="30"/>
+  </g>
+  <path fill="#fff" d="M135 109h27l-23 39h23l-49 64 14-45h-27l35-58Z"/>
+</svg>

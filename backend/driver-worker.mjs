@@ -37,7 +37,7 @@ export function startDriverWorker({pool,trackingApi,livePool=null,intervalMs=200
      const ordered=batches.flatMap(b=>b.positions.map(position=>({vehicle:b.vehicle,position}))).sort((a,b)=>Date.parse(a.position.deviceTime||a.position.serverTime||a.position.fixTime)-Date.parse(b.position.deviceTime||b.position.serverTime||b.position.fixTime));
      const alerts=[];let changed=false;
      for(const item of ordered){
-      const result=await identifyPosition(db,item.vehicle,mapDeviceTelemetry(item.position,item.vehicle.metadata?.ioMappings||[]));
+      const driverSensor=(state.data.sensorConfigs||[]).find(s=>String(s.vehicleId)===String(item.vehicle.id)&&s.type==='RFID / iButton');const driverVehicle=driverSensor?{...item.vehicle,metadata:{...(item.vehicle.metadata||{}),driverIdentification:{enabled:true,sourceKey:driverSensor.sourceKey||'driverUniqueId',type:driverSensor.sensorType||'DRIVER_ID'}}}:item.vehicle;const result=await identifyPosition(db,driverVehicle,mapDeviceTelemetry(item.position,item.vehicle.metadata?.ioMappings||[]));
       if(result)changed=true;
       if(result?.status==='unknown'&&item.vehicle.metadata?.driverIdentification?.unknownAlert===true)alerts.push({id:'driver-'+result.event_id,companyId:co.id,vehicleId:item.vehicle.id,deviceId:item.vehicle.traccar_device_id,vehicleName:item.vehicle.name,type:'Unknown Driver',status:'New',read:false,createdAt:result.identified_at,identifier:result.identifier,message:'Unregistered driver identifier: '+result.identifier});
      }

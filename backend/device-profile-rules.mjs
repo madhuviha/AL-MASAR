@@ -62,7 +62,7 @@ export function validateIoMappings(rows,c,{confirmOutputs=false}={}){
 }
 export function mapDeviceTelemetry(position,mappings=[]){
  if(!position)return position;
- const raw=typeof position.attributes==='string'?JSON.parse(position.attributes):position.attributes||{},attributes={...raw},values=[];
+ const raw=typeof position.attributes==='string'?JSON.parse(position.attributes):position.attributes||{};if(raw.driverUniqueId==null&&raw.lastKnownDriverUniqueId!=null)raw.driverUniqueId=raw.lastKnownDriverUniqueId;const attributes={...raw},values=[];
  for(const m of mappings){if(m.enabled===false||m.source_type==='DOUT')continue;const config=m.config_json||{},value=raw[config.sourceKey||defaultSourceKey(m.source_channel,m.function_key)];let normalized=value??null;
   if(m.source_type==='DIN'){const state=[true,1,'1','true'].includes(value)?true:[false,0,'0','false'].includes(value)?false:null;normalized=state===null?null:m.active_state==='LOW'?!state:state;const aliases={ignition:'ignition',seat_belt:'seatBelt',door:'door',sos:'sos',ac:'ac',pto:'pto',hand_brake:'handBrake',emergency:'emergency'};if(aliases[m.function_key]&&(m.function_key!=='ignition'||normalized!==null))attributes[aliases[m.function_key]]=normalized;}
   else if(m.function_key==='driver_id'){if(config.installationVerified&&normalizeIdentifier(value))attributes.driverIdentifier=identifierRaw(value);}

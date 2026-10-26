@@ -13,7 +13,18 @@ const mappedValue=m=>m.value==null?'Not reported':m.function==='seat_belt'?(m.va
 const rawValue=(key,value)=>value==null?'Not reported':typeof value==='boolean'?(value?'ON':'OFF'):typeof value==='object'?JSON.stringify(value):String(value)+(units[key]?' '+units[key]:'');
 
 export default function AssignedSensors({vehicle,store,management=false,onEdit,onDelete,onMap}){
- const automatic=automaticSensors(vehicle),sensors=assignedSensors(vehicle,store),mapped=vehicle.position?.mapped_io||vehicle.mapped_io||[],configured=(store?.sensorConfigs||[]).filter(s=>String(s.vehicleId)===String(vehicle.id)&&s.enabled!==false);
+ const automatic=automaticSensors(vehicle),sensors=assignedSensors(vehicle,store),allMapped=vehicle.position?.mapped_io||vehicle.mapped_io||[],configured=(store?.sensorConfigs||[]).filter(s=>String(s.vehicleId)===String(vehicle.id)&&s.enabled!==false&&!/engine\s*\(\s*voltage\s*\)/i.test(s.name||''));
+ // A configured sensor already represents the same signal as its physical I/O
+ // mapping. Keep the configured row (with the decoded value) and hide the
+ // duplicate mapping row from this list.
+ const normalized=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+ const configuredSignals=new Set(configured.flatMap(s=>[s.sourceKey,s.parameterName,s.name]).map(normalized).filter(Boolean));
+ const isSameSignal=(a,b)=>a===b||(a.length>=5&&b.length>=5&&(a.includes(b)||b.includes(a)));
+ const mapped=allMapped.filter(m=>{
+   const signal=[m.function,m.name,m.sourceKey].map(normalized).filter(Boolean);
+   const aliases=signal.flatMap(x=>x==='seatbelt'?['seatbelt','seatbeltsensor']:x==='driverid'||x==='driveridentifier'?['driverid','driveridentifier','driveruniqueid','rfidibutton']:[]);
+   return !signal.concat(aliases).some(x=>[...configuredSignals].some(y=>isSameSignal(x,y)));
+ });
  const known=new Set(sensors.flatMap(sensor=>[sensor.sourceKey,...(sensor.aliases||[])]).filter(Boolean));
  const raw=Object.entries(vehicle.position?.attributes||{}).filter(([key,value])=>!known.has(key)&&value!==undefined&&value!==null&&['string','number','boolean'].includes(typeof value));
  const reading=s=>s.sourceKey?sensorReading({...vehicle.position,current_driver:vehicle.currentDriver||vehicle.current_driver},s):'Not available';

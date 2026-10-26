@@ -1,0 +1,63 @@
+/* Active Aurora sidebar system. This file is loaded last so legacy sidebar rules cannot affect the new design. */
+@media(min-width:801px){
+  .appShell.autoSidebar{padding-left:86px!important}
+  .appShell.autoSidebar .top{left:86px!important}
+  .appShell.autoSidebar .side{top:0!important;bottom:0!important;left:0!important;width:86px!important;min-width:86px!important;padding:12px 10px!important;background:linear-gradient(164deg,#3f3ad6 0%,#1c5bd0 48%,#0c75b3 100%)!important;color:#ebf4ff!important;border:0!important;border-radius:0 24px 24px 0!important;box-shadow:5px 0 35px rgba(16,62,166,.25)!important;overflow:hidden!important;transition-property:width!important;transition-duration:.7s!important;transition-timing-function:cubic-bezier(.2,.8,.2,1)!important;will-change:width}
+  .appShell.autoSidebar .side.expanded{width:286px!important;min-width:286px!important}
+  .appShell.autoSidebar .company-logo{position:static!important;width:100%!important;height:59px!important;min-height:59px!important;padding:0 10px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;background:transparent!important;border:0!important;overflow:hidden!important}
+  .appShell.autoSidebar .company-logo .compactBrandImage,.appShell.autoSidebar .company-logo .compactBrandMark{display:block!important;width:43px!important;height:43px!important;min-width:43px!important;object-fit:contain!important;border-radius:14px!important;background:#fff!important}
+  .appShell.autoSidebar .company-logo .fullBrandImage,.appShell.autoSidebar .company-logo .expandedBrandWordmark,.appShell.autoSidebar .company-logo .fallbackBrandText{display:none!important}
+  .appShell.autoSidebar .side.expanded .company-logo .fullBrandImage{display:block!important;width:205px!important;height:48px!important;max-width:205px!important;object-fit:contain!important}
+  .appShell.autoSidebar .side nav{background:transparent!important;padding:18px 5px 5px!important;gap:0!important;overflow-y:auto!important;scrollbar-width:none!important;flex:1!important;min-height:0!important}
+  .appShell.autoSidebar .side nav:before{content:'WORKSPACE';display:block!important;height:35px;padding:10px 14px 3px;color:#c1dcff;font-size:10px;font-weight:850;letter-spacing:1.5px;white-space:nowrap;opacity:0!important}
+  .appShell.autoSidebar .side.expanded nav:before{opacity:1!important}
+  .appShell.autoSidebar .side nav button,.appShell.autoSidebar .logout{height:43px!important;min-height:43px!important;width:100%!important;margin:2px 0!important;padding:0 13px!important;border:0!important;border-radius:13px!important;background:transparent!important;color:#ebf4ff!important;display:flex!important;align-items:center!important;gap:0!important;justify-content:flex-start!important;white-space:nowrap!important}
+  .appShell.autoSidebar .side nav button svg,.appShell.autoSidebar .logout svg{width:20px!important;height:20px!important;min-width:20px!important;color:inherit!important}
+  .appShell.autoSidebar .side nav button:hover,.appShell.autoSidebar .logout:hover{background:rgba(255,255,255,.13)!important;color:#fff!important}
+  .appShell.autoSidebar .side nav button.active{background:linear-gradient(98deg,#22e6b3,#70efbc)!important;color:#064d53!important;box-shadow:0 7px 21px rgba(0,43,122,.19)!important}
+  .appShell.autoSidebar .side nav button span,.appShell.autoSidebar .logout span{display:block!important;opacity:0!important;visibility:hidden!important;max-width:0!important;overflow:hidden!important;margin-left:0!important;color:inherit!important;transition:opacity .15s ease,max-width .3s cubic-bezier(.22,1,.36,1),margin-left .3s cubic-bezier(.22,1,.36,1),visibility 0s linear .3s!important}
+  .appShell.autoSidebar .side.expanded nav button span,.appShell.autoSidebar .side.expanded .logout span{opacity:1!important;visibility:visible!important;max-width:180px!important;margin-left:15px!important;transition-delay:.06s,0s,0s,0s!important}
+  .appShell.autoSidebar .side .navChevron{display:none!important}
+  .appShell.autoSidebar .logout{margin-top:auto!important;border-top:1px solid rgba(236,245,255,.19)!important;padding-top:13px!important;border-radius:0!important}
+  .appShell.autoSidebar .sidebar-foot{margin-top:auto!important;padding:13px 5px 4px!important;border-top:1px solid rgba(236,245,255,.19)!important;flex:0 0 auto!important}
+  .appShell.autoSidebar .sidebar-profile{height:48px!important;display:flex!important;align-items:center!important;gap:10px!important;padding:0 8px!important;overflow:hidden!important;white-space:nowrap!important}
+  .appShell.autoSidebar .sidebar-avatar{width:30px!important;height:30px!important;min-width:30px!important;border-radius:50%!important;background:#21d9a4!important;color:#07506c!important;display:grid!important;place-items:center!important;font-weight:800!important}
+  .appShell.autoSidebar .sidebar-profile-copy{opacity:0!important;max-width:0!important;overflow:hidden!important;transition:opacity .15s ease,max-width .3s ease!important}
+  .appShell.autoSidebar .side.expanded .sidebar-profile-copy{opacity:1!important;max-width:180px!important}
+  .appShell.autoSidebar .sidebar-profile-copy b,.appShell.autoSidebar .sidebar-profile-copy small{display:block!important;color:#fff!important}
+  .appShell.autoSidebar .sidebar-profile-copy b{font-size:11px!important}.appShell.autoSidebar .sidebar-profile-copy small{font-size:10px!important;opacity:.75!important;margin-top:2px!important}
+}
+
+/* Final override: legacy :has() rules must never resize the page when the rail opens. */
+@media(min-width:801px){
+  .appShell.autoSidebar,
+  .appShell.autoSidebar:has(.side.expanded),
+  .appShell.autoSidebar:has(.side:hover){padding-left:86px!important}
+  .appShell.autoSidebar .top,
+  .appShell.autoSidebar:has(.side.expanded) .top,
+  .appShell.autoSidebar:has(.side:hover) .top{left:86px!important}
+  .appShell.autoSidebar main{margin-left:0!important;transform:none!important}
+}
+
+/* Exact reference motion: icon column stays fixed; only rail width and labels change. */
+@media(min-width:801px){
+  .appShell.autoSidebar .side nav button,
+  .appShell.autoSidebar .side.expanded nav button,
+  .appShell.autoSidebar .side:hover nav button,
+  .appShell.autoSidebar .side .logout,
+  .appShell.autoSidebar .side.expanded .logout{
+    justify-content:flex-start!important;
+    padding-left:13px!important;
+    padding-right:13px!important;
+    gap:0!important;
+    transform:none!important;
+  }
+  .appShell.autoSidebar .side nav button>svg:first-child,
+  .appShell.autoSidebar .side.expanded nav button>svg:first-child,
+  .appShell.autoSidebar .side:hover nav button>svg:first-child,
+  .appShell.autoSidebar .side .logout>svg:first-child{margin:0!important;transform:none!important}
+  .appShell.autoSidebar .side nav button span,.appShell.autoSidebar .side .logout span{margin-left:15px!important;transition:opacity .15s,max-width .3s!important}
+}
+
+/* Sidebar: omit the decorative workspace section label. */
+.appShell.autoSidebar .side nav:before{display:none!important;content:none!important;height:0!important;padding:0!important}

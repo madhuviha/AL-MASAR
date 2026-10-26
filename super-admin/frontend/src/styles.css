@@ -671,3 +671,24 @@ body,button,input,select,textarea,.leaflet-popup-content{font-family:Arial,Helve
 .sidebar.expanded .brandText,.sidebar.expanded .navBtn span,.sidebar.expanded .navBtn em,.sidebar.expanded .logout span,.sidebar.expanded .chev{transform:translateX(0)}
 header,main{position:relative;z-index:1}
 .sidebar.expanded~header,.sidebar.expanded~main{margin-left:0}
+/* Sidebar reference behavior: fixed page, independently scrolling navigation, stable icon column. */
+.sidebar{--sidebar-collapsed:64px;--sidebar-expanded:230px;width:var(--sidebar-collapsed)!important;overflow:hidden!important;transition:width .38s cubic-bezier(.2,.78,.22,1),box-shadow .38s ease!important}
+.sidebar.expanded{width:var(--sidebar-expanded)!important}
+.sidebar .sideScroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+.sidebar .navBtn,.sidebar .subNav button,.sidebar .logout{justify-content:flex-start!important;white-space:nowrap!important}
+.sidebar .navBtn svg,.sidebar .logout svg{flex:0 0 18px!important}
+.sidebar .navBtn span,.sidebar .logout span,.sidebar .navBtn em,.sidebar .chev{opacity:0!important;visibility:hidden!important;transition:none!important}
+.sidebar.expanded .navBtn span,.sidebar.expanded .logout span,.sidebar.expanded .navBtn em,.sidebar.expanded .chev{opacity:1!important;visibility:visible!important}
+header{left:64px!important;transition:none!important}
+main{margin-left:64px!important;transition:none!important}
+/* Equalizer Bars loader */
+.equalizerLoader{display:flex!important;align-items:flex-end;justify-content:center;gap:4px;width:42px!important;height:30px!important;position:static!important;overflow:visible!important;clip:auto!important;margin:0!important;padding:0!important}
+.equalizerLoader i{display:block;width:5px;height:13px;border-radius:4px;background:#0aa45b;transform-origin:bottom;animation:equalizerBars 1s ease-in-out infinite}
+.equalizerLoader i:nth-child(2){height:22px;animation-delay:.12s}.equalizerLoader i:nth-child(3){height:30px;animation-delay:.24s}.equalizerLoader i:nth-child(4){height:18px;animation-delay:.36s}
+@keyframes equalizerBars{0%,100%{transform:scaleY(.42);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.equalizerLoader i{animation:none!important;opacity:.8}}
+/* Keep the served page visible while loading. */
+.brandLoading{background:rgba(248,252,250,.22)!important;backdrop-filter:blur(1px)!important}
+.equalizerLoader{opacity:.58!important}
+.equalizerLoader i{opacity:.72;animation-duration:1.15s}
+.brandLoading>.brandLoadingText{opacity:.62!important}

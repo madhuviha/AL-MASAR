@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import {driverIdentifiers,validateDrivers,extractIdentifier,identifierAliases,sessionDriver} from './driver-identity.mjs';
+import {driverIdentifiers,validateDrivers,extractIdentifier,identifierAliases,normalizeIdentifier,sessionDriver} from './driver-identity.mjs';
 
 // Caller holds company_state's row lock, shared with company edits and ingestion.
 export async function syncDrivers(db,companyId,drivers){
@@ -56,7 +56,7 @@ export async function identifyPosition(db,vehicle,position){
 export async function currentDrivers(db,vehicles){
  if(!vehicles.length)return new Map();
  const rows=await db.query('SELECT s.*,c.last_event_time AS last_seen_at FROM vehicle_driver_sessions s JOIN vehicles v ON v.id=s.vehicle_id AND v.company_id=s.company_id LEFT JOIN driver_identity_cursor c ON c.company_id=s.company_id AND c.vehicle_id=s.vehicle_id WHERE s.vehicle_id=ANY($1::bigint[]) AND s.ended_at IS NULL',[vehicles.map(v=>v.id)]);
- return new Map(rows.rows.map(s=>[String(s.vehicle_id),sessionDriver(s)]));
+ const identifiers=await db.query('SELECT i.company_id,i.driver_id,i.type,i.identifier_normalized,d.name FROM driver_identifiers i JOIN drivers d ON d.company_id=i.company_id AND d.id=i.driver_id WHERE i.active AND d.active'); const lookup=new Map(); for(const row of identifiers.rows)for(const alias of identifierAliases(row.identifier_normalized,row.type))lookup.set(String(row.company_id)+':'+alias,row); return new Map(rows.rows.map(s=>{if(!s.driver_id){const match=lookup.get(String(s.company_id)+':'+normalizeIdentifier(s.identifier_raw));if(match)s={...s,driver_id:match.driver_id,driver_name:match.name,identifier_type:s.identifier_type||match.type}}return [String(s.vehicle_id),sessionDriver(s)]}));
 }
 
 export async function driverHistory(db,vehicle,from,to){

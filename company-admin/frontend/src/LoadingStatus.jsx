@@ -26,7 +26,7 @@ export default function LoadingStatus(){
 
 export function BrandLoading({label='Loading'}){
  return <div className="brandLoading" role="status" aria-live="polite" aria-label={label}>
-  <span className="msLoadingDots" aria-hidden="true"><i/><i/><i/></span>
+  <span className="equalizerLoader" aria-hidden="true"><i/><i/><i/><i/></span>
   <span className="brandLoadingText">{label}</span>
  </div>;
 }

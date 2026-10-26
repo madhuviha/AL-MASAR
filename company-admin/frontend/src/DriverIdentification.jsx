@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import {api,authToken} from './api';
-export const currentDriverName=v=>v?.currentDriver?.name||v?.current_driver?.name||'Not identified';
+export const currentDriverName=v=>v?.currentDriver?.name||v?.current_driver?.name||'—';
 export function DriverIdentifiers({value,onChange}){
  const rows=value.identifiers||((value.rfid&&value.rfid===value.ibutton)?[{type:'DRIVER_ID',identifier:value.rfid}]:[{type:'RFID',identifier:value.rfid||''},{type:'IBUTTON',identifier:value.ibutton||''}]);
  const change=(i,key,text)=>onChange(rows.map((r,j)=>j===i?{...r,[key]:text}:r));

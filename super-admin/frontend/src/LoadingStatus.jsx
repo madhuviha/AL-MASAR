@@ -26,10 +26,7 @@ export default function LoadingStatus(){
 
 export function BrandLoading(){
  return <div className="brandLoading" role="status" aria-live="polite" aria-label="Loading">
-  <span className="brandLoadingCircle" aria-hidden="true">
-   <svg viewBox="0 0 64 64"><circle className="brandLoadingTrack" cx="32" cy="32" r="25"/><circle className="brandLoadingArc" cx="32" cy="32" r="25" pathLength="100"/></svg>
-   <b>V</b>
-  </span>
+  <span className="equalizerLoader" aria-hidden="true"><i/><i/><i/><i/></span>
   <span className="brandLoadingText">Loading</span>
  </div>;
 }

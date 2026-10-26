@@ -29,7 +29,7 @@ export function VehicleReferenceDialog({v,company,store,onClose,onNavigate,onEdi
  const p=v.position||{},a=p.attributes||{},local=v.local||{},s=mapStatus(v,company.settings),state=statusName(s.group);
  const coords=Number.isFinite(p.latitude)&&Number.isFinite(p.longitude);
  const updated=latestCommunicationTime(v);
- const driver=v.driverName||'Not identified';
+ const driver=v.driverName&&v.driverName!=='Not identified'?v.driverName:'—';
  const engine=s.engine;
  const fuel=a.fuelLevel,odo=a.totalDistance??a.odometer,externalVoltage=a.power??a.externalPowerVoltage??a.externalVoltage??a.externalPower;
  const row=(Icon,label,value,cls='')=><div className={'vrField '+cls} key={label}><Icon/><span>{label}</span><b>{value}</b></div>;
@@ -43,7 +43,7 @@ export function VehicleReferenceDialog({v,company,store,onClose,onNavigate,onEdi
  {tab==='Overview'&&<div className="vrColumns"><div><h3 className="vrSectionTitle"><Car/>Vehicle Information</h3>
  {row(Car,'Vehicle Name',display(v.name))}{row(ClipboardList,'Plate Number',display(v.plate||local.plate))}{row(Radio,'IMEI',display(imei(v)))}{row(Radio,'Device Model',display(local.deviceModel||local.device_model||v.device?.model))}{row(Radio,'Protocol',display(protocol(v)))}{row(Building2,'Company',display(company.name))}{row(UserRound,'Current Driver',<CurrentDriver vehicle={v}/>)}{row(Users,'Group',display(v.group||local.group))}{row(Phone,'SIM Number',display(local.simNumber||local.sim||v.device?.phone))}
  </div><div><h3 className="vrSectionTitle"><Gauge/>Live Status</h3>
- {row(CheckCircle2,'Status',<span className={'vrState '+s.group}>● &nbsp;{state}</span>)}{row(Gauge,'Speed',s.speed==null?'Not available':Math.round(s.speed)+' kph')}{row(()=> <Engine on={engine}/>,'Engine',engine===true?'ON':engine===false?'OFF':'Not available',engine===true?'engineOn':'')}{row(Power,'Ignition',s.ignition===true?'ON':s.ignition===false?'OFF':'Not available',s.ignition===true?'engineOn':'')}
+ {row(CheckCircle2,'Status',<span className={'vrState '+s.group}>● &nbsp;{state}</span>)}{row(Gauge,'Speed',s.speed==null?'Not available':Math.round(s.speed)+' kph')}{row(()=> <Engine on={engine}/>,'Engine',engine===true?'ON':'OFF',engine===true?'engineOn':'')}{row(Power,'Ignition',s.ignition===true?'ON':s.ignition===false?'OFF':'Not available',s.ignition===true?'engineOn':'')}
  
  {row(Radio,'External Voltage',known(externalVoltage)&&Number.isFinite(Number(externalVoltage))?Number(externalVoltage).toFixed(2)+' V':'Not reported by tracker')}{row(Gauge,'Odometer',known(odo)&&Number.isFinite(Number(odo))?(Number(odo)/1000).toLocaleString(undefined,{maximumFractionDigits:1})+' km':'Not available')}{row(Clock3,'Last Update',date(updated))}{row(CalendarDays,'Expiry Date',local.expiryDate?date(local.expiryDate):local.unlimited===true?'Unlimited':'Not available')}
   {row(MapPin,'Address',<Address position={p}/>)}

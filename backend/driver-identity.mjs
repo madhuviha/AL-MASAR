@@ -1,6 +1,6 @@
 // Only decoded identity attributes are accepted. Raw AVL IO needs a verified
 // decoder/profile mapping, never a generic sensor such as battery or ignition.
-export const identityKeys=['driverUniqueId','driverIdentifier','driverId','driver_id','driverID','rfid','ibutton','iButton','iButtonId','ibutton_id','oneWire','1wire'];
+export const identityKeys=['driverUniqueId','lastKnownDriverUniqueId','driverIdentifier','driverId','driver_id','driverID','rfid','ibutton','iButton','iButtonId','ibutton_id','oneWire','1wire'];
 function byteArray(value){
  if(Array.isArray(value)&&value.length>0&&value.length<=64&&value.every(x=>Number.isInteger(x)&&x>=0&&x<=255))return value;
  if(typeof Uint8Array!=='undefined'&&value instanceof Uint8Array&&value.length>0&&value.length<=64)return [...value];
@@ -79,9 +79,9 @@ export function extractIdentifier(position,profile={}){
  if(profile.enabled===false)return null;
  if(profile.sourceKey&&!identityKeys.includes(profile.sourceKey))throw Error('Driver identification requires a decoded identity attribute.');
  const a=position?.attributes||{},keys=profile.sourceKey?[profile.sourceKey]:identityKeys;
- for(const key of keys){const normalized=normalizeIdentifier(a[key]);if(!normalized)continue;
+ for(const key of keys){const candidate=a[key]??(['driverUniqueId','driverIdentifier','driverId','driver_id','driverID'].includes(key)?a.lastKnownDriverUniqueId:null);const normalized=normalizeIdentifier(candidate);if(!normalized)continue;
   const type=['RFID','IBUTTON'].includes(profile.type)?profile.type:/ibutton|onewire|driver_id/i.test(key)?'IBUTTON':key.toLowerCase()==='rfid'?'RFID':'DRIVER_ID';
-  return {raw:identifierRaw(a[key]),normalized,type,source:key};
+  return {raw:identifierRaw(candidate),normalized,type,source:key};
  }
  return null;
 }
