@@ -177,6 +177,7 @@ async function apiJson(path, options = {}) {
     const raw = body?.error;
     const e = new Error(raw && /[ .]/.test(raw) && !/[{}<>]/.test(raw) ? raw : { 401: "Please sign in again.", 403: "You do not have permission for this action.", 409: "Records changed. Refresh and try again." }[r.status] || "The request could not be completed. Please try again.");
     e.body = body;
+    e.status = r.status;
     throw e;
   }
   return body;
@@ -399,7 +400,7 @@ function useStableSidebar() {
 }
 function SuperLogin({ onReady }) {
   const [email, setEmail] = useState(""), [password, setPassword] = useState(""), [showPassword, setShowPassword] = useState(false), [name, setName] = useState("Super Admin"), [setup, setSetup] = useState(false), [loading, setLoading] = useState(true), [submitting, setSubmitting] = useState(false), [error, setError] = useState("");
-  const friendly = (e) => ({ invalid_credentials: "Incorrect email or password.", account_disabled: "This account is disabled.", login_failed: "Unable to sign in right now.", captcha_required: "Complete the security check and try again.", email_and_password_required: "Enter a valid email and a password of at least 8 characters.", super_admin_already_exists: "The Super Admin account is already configured." })[e] || "Unable to sign in. Check your details or contact your administrator.";
+  const friendly = (e) => ({ invalid_credentials: "Incorrect email or password.", too_many_login_attempts: "Too many sign-in attempts. Wait 15 minutes, then try again.", account_disabled: "This account is disabled.", login_failed: "Unable to sign in right now.", captcha_required: "Complete the security check and try again.", email_and_password_required: "Enter a valid email and a password of at least 8 characters.", super_admin_already_exists: "The Super Admin account is already configured." })[e] || "Unable to sign in. Check your details or contact your administrator.";
   useEffect(() => {
     fetch(`${API_BASE}/auth/setup-status`).then((r) => {
       if (!r.ok) throw Error("Server unavailable");
@@ -421,7 +422,11 @@ function SuperLogin({ onReady }) {
       localStorage.setItem(AUTH_KEY, out.token);
       onReady(out.user);
     } catch (ex) {
-      setError(friendly(ex.body?.error || ex.message));
+      setError(ex.message === "Super Admin access required."
+        ? ex.message
+        : !ex.status || ex.status >= 500
+          ? "Login server unavailable. Start the database tunnel and backend, then try again."
+          : friendly(ex.body?.error || ex.message));
     } finally {
       setSubmitting(false);
     }

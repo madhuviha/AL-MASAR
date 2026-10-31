@@ -41,9 +41,16 @@
       "problemMatcher": []
     },
     {
+      "label": "Run database tunnel",
+      "type": "shell",
+      "command": "ssh -N -o ServerAliveInterval=30 -o ExitOnForwardFailure=yes -L 15432:127.0.0.1:5433 -L 18082:127.0.0.1:8082 root@134.122.92.105",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
       "label": "Run Company portal",
       "type": "shell",
-      "command": "npm run dev",
+      "command": "npm run dev -- --host 0.0.0.0 --port 5173",
       "options": { "cwd": "${workspaceFolder}/company-admin/frontend" },
       "isBackground": true,
       "problemMatcher": []
@@ -51,9 +58,29 @@
     {
       "label": "Run Super Admin portal",
       "type": "shell",
-      "command": "npm run dev",
+      "command": "npm run dev -- --host 0.0.0.0 --port 5174",
       "options": { "cwd": "${workspaceFolder}/super-admin/frontend" },
       "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Start application servers",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "Run backend",
+        "Run Company portal",
+        "Run Super Admin portal"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Start all local servers",
+      "dependsOrder": "parallel",
+      "runOptions": { "runOn": "folderOpen" },
+      "dependsOn": [
+        "Run database tunnel",
+        "Start application servers"
+      ],
       "problemMatcher": []
     },
     {

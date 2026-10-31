@@ -224,3 +224,108 @@ html,body,#root{max-width:100%;min-width:0;overflow-x:hidden}.productionLogin,.p
 .exportDialog header{min-height:60px;padding:0 17px;border-bottom:1px solid #e3e8ed;display:flex;align-items:center;justify-content:space-between}.exportDialog header h2{margin:0;display:flex;align-items:center;gap:9px;font-size:18px}.exportDialog header h2 svg{width:20px}.exportDialog header button{border:0;background:transparent;color:#a2acb5}.exportDialog header button svg{width:19px}
 .exportDialogBody{padding:18px;overflow:auto}.exportDialogBody>label{display:flex;flex-direction:column;gap:7px;font-size:12px}.exportDialogBody select{height:38px;border:1px solid #e2e7eb;background:#f7f8f9;border-radius:2px;padding:0 12px;color:#34465b}.exportFieldHeading{margin:16px 0 8px;font-size:12px}.exportFieldHeading b{color:#d93025}.exportFieldTools{height:42px;border:1px solid #d9e0e5;background:#f3f5f6;display:grid;grid-template-columns:1fr 1fr minmax(170px,1.3fr);align-items:center}.exportFieldTools>button{height:100%;border:0;border-right:1px solid #dde3e7;background:transparent;color:#4a5f75}.exportFieldTools>label{height:100%;display:flex;align-items:center;gap:7px;padding:0 11px}.exportFieldTools svg{width:17px}.exportFieldTools input{min-width:0;width:100%;border:0;background:transparent;outline:0}.exportFieldList{border:1px solid #d9e0e5;border-top:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;max-height:260px;overflow:auto;padding:7px 14px}.exportFieldList label{min-height:36px;display:flex;align-items:center;gap:8px;font-size:12px}.exportFieldList input{width:20px;height:20px}.exportDialogBody>p{color:#c62828;font-size:12px;margin:10px 0 0}.exportDialog footer{padding:18px;background:#f7f8f9;display:flex;gap:10px}.exportDialog footer button{height:36px;border:0;padding:0 16px}.exportDialog footer .exportConfirm{background:#13a560;color:#fff}.exportDialog footer button:not(.exportConfirm){background:#fff;color:#4b5e70}
 @media(max-width:560px){.exportFieldTools{grid-template-columns:1fr 1fr}.exportFieldTools>label{grid-column:1/-1;border-top:1px solid #dde3e7;background:#fff}.exportFieldTools{height:auto}.exportFieldTools>button{height:40px}.exportFieldTools>label{height:40px}.exportFieldList{grid-template-columns:1fr}}
+.appShell,.appShell *{font-family:Arial,sans-serif}
+.appShell{font-size:14px}
+.appShell *{border-radius:0!important}
+.appShell label,.appShell .field>label,.appShell .formLabel{font-size:12px}
+.appShell h1,.appShell .page h1{font-size:clamp(20px,2vw,24px)}
+.appShell h2{font-size:20px}.appShell h3{font-size:18px}
+
+/* Keep vehicle identities readable instead of truncating them in the live list. */
+.lockedMapPage .mapVehicleIdentity{min-width:0}
+.lockedMapPage .mapVehicleIdentity>b{display:block;white-space:normal;line-height:1.25}
+.lockedMapPage .mapVehicleName{display:inline;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;word-break:break-word}
+.lockedMapPage .mapVehicleBadge{display:inline-flex;vertical-align:middle;margin-left:6px}
+.lockedMapPage .mapVehicleMain{grid-template-columns:56px minmax(0,1fr) 88px}
+
+/* Vehicle editor: one stable viewport for Main, Icon & Logo, and Relay tabs. */
+.appShell .modal:has(.fleetVehicleForm){width:min(740px,calc(100vw - 24px))!important;max-width:740px!important;height:min(750px,90vh)!important;max-height:90vh!important}
+.appShell .modal:has(.fleetVehicleForm) .modalBody{min-height:0;overflow-y:auto}
+.appShell .modal:has(.fleetVehicleForm) .fleetVehicleForm{min-height:100%;display:flex;flex-direction:column}
+.appShell .modal:has(.fleetVehicleForm) .fleetFormTabs{flex:0 0 auto}
+.appShell .modal:has(.fleetVehicleForm) .modalActions{margin-top:auto;flex:0 0 auto}
+@media (max-width:700px){.appShell .modal:has(.fleetVehicleForm){width:calc(100vw - 16px)!important;height:90vh!important;max-height:90vh!important}}
+/* Final typography and dashboard control normalization. */
+html,body,#root{font-family:Arial,sans-serif!important;font-size:14px}
+button,input,select,textarea{font-family:Arial,sans-serif!important}
+.appShell .speedometer,.appShell [class*="speedometer"],.appShell [class*="gauge"],.appShell .speedValue,.appShell .speedNumber{border-radius:0!important}
+.appShell .switch,.appShell .toggleLine,.appShell .switchLine,.appShell .switch i{border-radius:0!important}
+.appShell .donutWrap,.appShell .statusChart,.appShell .pieChart,.appShell .chartCard,.appShell .dashboardCard,.appShell .statCard{border-radius:0!important}
+
+/* Dashboard status chart: match the reference donut + detailed status list. */
+.statusCard .donutWrap{display:grid;grid-template-columns:minmax(280px,1fr) minmax(320px,1fr);gap:44px;align-items:center;padding:18px 28px 24px}
+.statusCard .donutWrap>div:first-child{margin-inline:auto}
+.statusCard .legend{display:grid;gap:0}
+.statusCard .legend>div{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #e1e8ee}
+.statusCard .legend>div>span{display:grid;gap:3px;min-width:0}
+.statusCard .legend>div>span b{font-size:14px;color:#102d4f}
+.statusCard .legend>div>span small{font-size:11px;color:#64748b}
+.statusCard .legend>div>strong{display:grid;justify-items:end;gap:3px;font-size:17px;color:#0f3157}
+.statusCard .legend>div>strong small{font-size:11px;color:#64748b;font-weight:500}
+@media(max-width:900px){.statusCard .donutWrap{grid-template-columns:1fr;gap:14px}.statusCard .donutWrap>div:first-child{margin-inline:auto}}
+
+/* Shared rectangular ON/OFF control used by rules, settings, and modal forms. */
+.onoffswitch,.appShell .switch{position:relative;width:90px;height:30px;flex:0 0 90px;user-select:none}
+.onoffswitch-checkbox,.appShell .switch>input{position:absolute;opacity:0;pointer-events:none}
+.onoffswitch-label,.appShell .switch>i{display:block;position:absolute;inset:0;overflow:hidden;cursor:pointer;border:2px solid #999;background:#ccc;border-radius:0!important}
+.onoffswitch-inner,.appShell .switch>i{display:block;width:200%;height:30px;margin-left:-100%;transition:margin .3s ease-in 0s;box-sizing:border-box;position:relative}
+.onoffswitch-inner:before,.onoffswitch-inner:after,.appShell .switch>i:before,.appShell .switch>i:after{display:block;float:left;width:50%;height:26px;padding:0;line-height:26px;font-size:14px;color:#fff;font-family:Arial,sans-serif;font-weight:bold;box-sizing:border-box;border:2px solid transparent;background-clip:padding-box}
+.onoffswitch-inner:before,.appShell .switch>i:before{content:"ON";padding-left:10px;background:#2e8def;color:#fff}
+.onoffswitch-inner:after,.appShell .switch>i:after{content:"OFF";padding-right:10px;background:#ccc;color:#333;text-align:right}
+.onoffswitch-switch,.appShell .switch>i{ }
+.onoffswitch-switch{display:block;width:25px;margin:0;background:#000;position:absolute;top:0;bottom:0;right:65px;transition:all .3s ease 0s}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner,.appShell .switch>input:checked + i{margin-left:0}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch{right:0}
+.appShell .switch>i:after{content:"OFF"}
+.lockedMapPage,
+.lockedMapPage *{font-family:Arial,Helvetica,sans-serif!important}
+.lockedMapPage .mapVehicleIdentity{min-width:0!important}
+.lockedMapPage .mapVehicleIdentity>b{display:flex!important;align-items:flex-start!important;gap:6px!important;flex-wrap:wrap!important}
+.lockedMapPage .mapVehicleName{display:inline!important;max-width:none!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+.lockedMapPage .mapVehicleBadge{flex:0 0 auto!important;white-space:nowrap!important}
+.lockedMapPage .statusCountStrip{overflow-x:auto!important;scrollbar-width:thin!important}
+.lockedMapPage .statusCountStrip button{flex:0 0 auto!important;white-space:nowrap!important}
+.lockedMapPage .livePanelVehicleState{display:none!important}
+.lockedMapPage .liveSpeed{background:transparent!important;border:0!important;border-radius:50%!important;box-shadow:none!important;padding:0!important;min-width:0!important;width:132px!important;height:132px!important;overflow:visible!important}
+.lockedMapPage .speedGaugeVisual{border-radius:50%!important;overflow:hidden!important}
+.lockedMapPage .mapMoreOptions .mapGeofenceOption{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;background:transparent}
+.lockedMapPage .mapMoreOptions .mapGeofenceOption span{display:none}
+.lockedMapPage .mapMoreOptions .mapGeofenceOption input{position:absolute;opacity:0;pointer-events:none}
+.lockedMapPage .mapMoreOptions .mapGeofenceOption svg{width:22px;height:22px;color:#0ca363}
+.userForm .selectAllVehicles{grid-column:1/-1!important;font-weight:700!important;color:#0b6f46!important;border-bottom:1px solid #dbe5ee!important;padding-bottom:8px!important;margin-bottom:2px!important}
+.userForm .selectAllVehicles input{accent-color:#0ca363!important}
+.copyrightFooter{display:none!important}
+
+/* Map viewport cleanup: keep controls aligned and prevent the page itself from scrolling. */
+html:has(.lockedMapPage),
+body:has(.lockedMapPage){overflow:hidden!important;height:100%!important}
+.lockedMapPage{height:calc(100vh - 72px)!important;min-height:0!important;overflow:hidden!important;border:0!important;background:transparent!important}
+.lockedMapPage .lockedMapShell{height:100%!important;min-height:0!important;overflow:hidden!important;border:0!important}
+.lockedMapPage .lockedMapPanel{height:100%!important;max-height:100%!important;overflow:hidden!important}
+.lockedMapPage .statusGroups{height:100%!important;min-height:0!important}
+.lockedMapPage .mapVehicleMain{position:relative!important;grid-template-columns:minmax(0,1fr) 104px!important;align-items:center!important}
+.lockedMapPage .mapVehicleIdentity{grid-column:1!important;grid-row:1!important}
+.lockedMapPage .mapVehicleState{grid-column:2!important;grid-row:1!important;justify-self:end!important;align-self:center!important}
+.lockedMapPage .mapVehicleBadge{position:absolute!important;top:10px!important;right:104px!important;margin:0!important}
+.lockedMapPage .mapVehicleIdentity>b{padding-right:78px!important}
+.lockedMapPage .mapPageFooter,.lockedMapPage .mapFooter,.lockedMapPage footer{display:none!important}
+.lockedMapPage:after{display:none!important}
+/* Keep the live panel low and make long details usable without extending the map page. */
+body:has(.lockedMapPage) footer,
+body:has(.lockedMapPage) .copyrightFooter,
+body:has(.lockedMapPage) .appFooter{display:none!important}
+.lockedMapPage .liveVehiclePanel{bottom:6px!important;border:0!important;box-shadow:none!important}
+.lockedMapPage .liveVehiclePanelGrid{border:0!important}
+.lockedMapPage .livePanelDetails,
+.lockedMapPage .livePanelSensors{min-height:0!important;overflow:hidden!important}
+.lockedMapPage .livePanelDetails dl,
+.lockedMapPage .livePanelSensorScroll{max-height:190px!important;overflow-y:auto!important;scrollbar-width:thin!important}
+.lockedMapPage .mapVehicleState{transform:translateY(4px)!important}
+.recordIdBadge{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border:1px solid #cfe4da;border-radius:0;background:#f2faf6;color:#0b7a52;font-size:11px;font-weight:800;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums}.entityMeta{display:block;margin-top:2px;color:#72849b;font-size:10px}.vrVehicleIdentity{display:flex;align-items:center;gap:6px;min-width:0}.vrVehicleIdentity .vrName{min-width:0}
+
+/* Vehicle Status keeps the reference chart and legend centered in its card. */
+.appShell .statusCard .donutWrap{grid-template-columns:280px minmax(280px,300px);justify-content:center;gap:36px;padding:24px 20px 18px}
+.appShell .statusCard .statusDonut,.appShell .statusCard .statusDonutCenter,.appShell .statusCard .legend i{border-radius:50%!important}
+.appShell .statusCard .legend>div{min-height:79px;box-sizing:border-box}
+@media(max-width:900px){.appShell .statusCard .donutWrap{grid-template-columns:minmax(0,1fr);gap:18px;padding:18px 12px}.appShell .statusCard .legend{width:min(100%,420px);margin-inline:auto}}
+@media(max-width:420px){.appShell .statusCard .statusDonut{width:240px!important;height:240px!important}.appShell .statusCard .statusDonutCenter{inset:34px!important}}

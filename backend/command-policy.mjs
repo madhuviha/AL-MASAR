@@ -47,10 +47,15 @@ export function commandPermissionGranted(user={}){
   return user.role!=='company_user'||user.metadata?.permissions?.Commands===true;
 }
 
-export function normalizeCommandRequest(body={},vehicle={},options={}){
+export function immobilizerPermissionGranted(user={}){
+  return user.role==='super_admin'||user.role==='company_admin'||
+    (user.role==='company_user'&&user.metadata?.permissions?.Immobilizer===true);
+}
+
+export function normalizeCommandRequest(body={},vehicle={}){
   const rawMode=typeof body.mode==='string'?body.mode:'';
-  const legacy=!rawMode&&options.allowLegacy===true;
-  const mode=legacy?'custom':rawMode;
+  // A command typed in the mobile app is custom unless a preset was explicitly selected.
+  const mode=rawMode||'custom';
   if(!['preset','custom'].includes(mode))throw new CommandValidationError('Choose a preset or Custom Command.','invalid_command_mode');
 
   const command=typeof body.command==='string'?body.command:'';
@@ -59,8 +64,6 @@ export function normalizeCommandRequest(body={},vehicle={},options={}){
 
   const family=commandProtocolFamily(vehicle);
   if(mode==='custom'){
-    const label=legacy?CUSTOM_LABEL:body.label;
-    if(label!==CUSTOM_LABEL)throw new CommandValidationError('Custom commands must use the Custom Command label.','invalid_command_label');
     if(family==='gt06'&&!command.endsWith('#'))throw new CommandValidationError('GT06 / H9 custom commands must end with #.','missing_command_terminator');
     return {command,mode,label:CUSTOM_LABEL,protocol:family};
   }

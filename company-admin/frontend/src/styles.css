@@ -10,3 +10,19 @@
 .equalizerLoader i{opacity:.72;animation-duration:1.15s}
 .brandLoading>.brandLoadingText{opacity:.62!important}
 .dashboardVehicleCompact{padding:10px 12px!important;border-radius:10px!important;margin-bottom:8px!important}.dashboardVehicleCompact>div:nth-child(2){margin-top:8px!important;font-size:11px!important}.dashboardVehicleCompact>p{margin:6px 0!important;font-size:11px!important}.dashboardVehicleCompact>div:last-child{margin-top:8px!important;gap:6px!important}.dashboardVehicleCompact>div:last-child button{padding:5px 8px!important;font-size:11px!important}.dashboardVehicleCompact strong{font-size:14px!important}
+
+/* Saved raw commands on the existing device commands page. */
+.savedCustomCommandEditor{display:grid;gap:9px;margin:12px 0 16px;padding:12px;border:1px solid #dbe5ee;background:#f8fbfd;font-family:Arial,sans-serif}
+.savedCustomCommandEditor>label{display:grid;gap:5px;font-size:12px;font-weight:600;color:#183153}
+.savedCustomCommandEditor input{width:100%;min-height:34px;padding:6px 9px;border:1px solid #cbd9e5;border-radius:0;background:#fff;color:#183153}
+.savedCustomCommandEditor>button{min-height:34px;padding:6px 10px;border:1px solid #0da15b;border-radius:0;background:#fff;color:#087d4b;font-weight:600}
+.savedCustomCommandEditor>button:disabled,.savedCustomCommandRemove:disabled{opacity:.5;cursor:not-allowed}
+.savedCustomCommandList{display:grid;gap:6px;margin-top:4px}
+.savedCustomCommandList>strong{font-size:12px}
+.savedCustomCommand{display:grid;grid-template-columns:minmax(0,1fr) 34px;border:1px solid #dbe5ee;background:#fff}
+.savedCustomCommand button{border:0;border-radius:0;background:transparent;color:#183153;text-align:left;min-width:0;padding:6px 8px}
+.savedCustomCommand button:hover{background:#edf8f2}
+.savedCustomCommand button b,.savedCustomCommand button small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.savedCustomCommand button small{font-size:11px;color:#647e9b;margin-top:2px}
+.savedCustomCommand .savedCustomCommandRemove{display:grid;place-items:center;border-left:1px solid #dbe5ee;color:#c64249}
+.savedCustomCommandRemove svg{width:15px;height:15px}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeCommandRequest,companyUserCanAccessVehicle,commandPermissionGranted,CommandValidationError} from '../command-policy.mjs';
+import {normalizeCommandRequest,companyUserCanAccessVehicle,commandPermissionGranted,immobilizerPermissionGranted,CommandValidationError} from '../command-policy.mjs';
 
 const gt06={protocol:'GT06',device_model:'H9'};
 
@@ -40,7 +40,21 @@ test('company users need both Commands permission and an assigned vehicle',()=>{
   assert.equal(commandPermissionGranted({role:'company_user',metadata:{permissions:{Commands:false},vehicleIds:[9]}}),false);
 });
 
-test('legacy payloads remain available only when explicitly allowed',()=>{
-  assert.throws(()=>normalizeCommandRequest({command:'STATUS#'},gt06),error=>error.code==='invalid_command_mode');
-  assert.equal(normalizeCommandRequest({command:'STATUS#'},gt06,{allowLegacy:true}).command,'STATUS#');
+test('immobilizer access follows the company user permission and vehicle assignment',()=>{
+  assert.equal(immobilizerPermissionGranted({role:'super_admin'}),true);
+  assert.equal(immobilizerPermissionGranted({role:'company_admin'}),true);
+  const permitted={role:'company_user',metadata:{permissions:{Immobilizer:true},vehicleIds:[8]}};
+  assert.equal(immobilizerPermissionGranted(permitted),true);
+  assert.equal(companyUserCanAccessVehicle(permitted,8),true);
+  assert.equal(companyUserCanAccessVehicle(permitted,9),false);
+  assert.equal(immobilizerPermissionGranted({role:'company_user',metadata:{permissions:{Immobilizer:false},vehicleIds:[8]}}),false);
+  assert.equal(immobilizerPermissionGranted({role:'company_user',metadata:{vehicleIds:[8]}}),false);
+});
+
+test('manually entered mobile commands need no preset mode or label',()=>{
+  const request=normalizeCommandRequest({command:'STATUS#'},gt06);
+  assert.deepEqual({command:request.command,mode:request.mode,label:request.label},{command:'STATUS#',mode:'custom',label:'Custom Command'});
+  assert.equal(normalizeCommandRequest({mode:'custom',command:'STATUS#'},gt06).command,'STATUS#');
+  assert.equal(normalizeCommandRequest({command:'STATUS#',label:'Typed on mobile'},gt06).label,'Custom Command');
+  assert.throws(()=>normalizeCommandRequest({mode:'other',command:'STATUS#'},gt06),error=>error.code==='invalid_command_mode');
 });
