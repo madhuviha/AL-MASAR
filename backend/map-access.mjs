@@ -1,6 +1,7 @@
 const booleanOr=(value,fallback)=>typeof value==='boolean'?value:fallback;
 
 export const mapAccessDefinitions=[
+ ['googleRoad','google-road','Google Maps Normal'],['googleSatellite','google-satellite','Google Maps Satellite'],['googleHybrid','google-hybrid','Google Maps Hybrid'],
  ['bingRoad','bing-road','Bing Normal'],['bingSatellite','bing-satellite','Bing Satellite'],['bingHybrid','bing-hybrid','Bing Hybrid'],
  ['openStreetMap','osm-road','OpenStreetMap'],['cartoLiberty','carto-liberty','MapTiles Liberty'],['cartoPositron','carto-positron','MapTiles Positron'],['cartoDark','carto-dark','MapTiles Dark'],['openTopoMap','open-topo','OpenTopoMap'],
  ['esriStreet','esri-street','Esri Street'],['esriSatellite','esri-satellite','Esri Satellite'],['mapTilerBasic','maptiler-basic','MapTiler Basic'],['mapTilerStreets','maptiler-streets','MapTiler Streets'],['mapTilerSatellite','maptiler-satellite','MapTiler Satellite'],
@@ -25,8 +26,11 @@ const present=value=>Boolean(String(value||'').trim());
 const encoded=value=>encodeURIComponent(String(value||'').trim());
 
 export function availableMaps(access,settings={}){
- const allowed=normalizeMapAccess(access),bing=present(settings.bingMapsKey),maptiler=present(settings.mapTilerKey),mapbox=present(settings.mapboxToken),here=present(settings.hereMapsKey),tomtom=present(settings.tomtomMapsKey),yandex=present(settings.yandexMapsKey),openMapTiles=present(settings.openMapTilesUrl);
+ const allowed=normalizeMapAccess(access),google=present(settings.googleMapsKey),bing=present(settings.bingMapsKey),maptiler=present(settings.mapTilerKey),mapbox=present(settings.mapboxToken),here=present(settings.hereMapsKey),tomtom=present(settings.tomtomMapsKey),yandex=present(settings.yandexMapsKey),openMapTiles=present(settings.openMapTilesUrl);
  return [
+  allowed.googleRoad&&google&&{id:'google-road',label:'Google Maps Normal',engine:'google',mapTypeId:'roadmap',key:String(settings.googleMapsKey)},
+  allowed.googleSatellite&&google&&{id:'google-satellite',label:'Google Maps Satellite',engine:'google',mapTypeId:'satellite',key:String(settings.googleMapsKey)},
+  allowed.googleHybrid&&google&&{id:'google-hybrid',label:'Google Maps Hybrid',engine:'google',mapTypeId:'hybrid',key:String(settings.googleMapsKey)},
   allowed.bingRoad&&bing&&{id:'bing-road',label:'Bing Normal',engine:'bing',style:'r',key:String(settings.bingMapsKey)},
   allowed.bingSatellite&&bing&&{id:'bing-satellite',label:'Bing Satellite',engine:'bing',style:'a',key:String(settings.bingMapsKey)},
   allowed.bingHybrid&&bing&&{id:'bing-hybrid',label:'Bing Hybrid',engine:'bing',style:'h',key:String(settings.bingMapsKey)},

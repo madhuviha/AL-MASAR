@@ -9,11 +9,11 @@ test('existing accounts retain all maps by default',()=>{
  assert.equal(access.mapillary,true);
 });
 
-test('legacy Google map settings are ignored',()=>{
- const access=normalizeMapAccess({googleNormal:false,openStreetMap:true});
- assert.equal('googleRoad' in access,false);
- assert.equal('googleSatellite' in access,false);
- assert.equal(defaultBaseMap({mapProvider:'Google Maps'},access),'osm-road');
+test('Google map permissions are available and can be selected',()=>{
+ const access=normalizeMapAccess({googleRoad:true,googleSatellite:false,googleHybrid:false,openStreetMap:true});
+ assert.equal(access.googleRoad,true);
+ assert.equal(access.googleSatellite,false);
+ assert.equal(defaultBaseMap({mapProvider:'Google Maps',googleMapsKey:'configured'},access,'google-road'),'google-road');
 });
 
 test('at least one base map is always available',()=>{
@@ -32,7 +32,7 @@ test('keyed maps appear only after their browser credential is configured',()=>{
  const access=normalizeMapAccess();
  assert.equal(availableMaps(access).some(map=>map.id==='maptiler-streets'),false);
  assert.equal(availableMaps(access,{mapTilerKey:'configured'}).some(map=>map.id==='maptiler-streets'),true);
- assert.equal(availableMaps(access,{googleMapsKey:'configured'}).filter(map=>map.id.startsWith('google-')).length,0);
+ assert.equal(availableMaps(access,{googleMapsKey:'configured'}).filter(map=>map.id.startsWith('google-')).length,3);
  assert.equal(availableMaps(access,{bingMapsKey:'configured'}).filter(map=>map.id.startsWith('bing-')).length,3);
  assert.equal(availableMaps(access,{yandexMapsKey:'configured'}).some(map=>map.id==='yandex-road'),true);
  assert.equal(availableMaps(access,{openMapTilesUrl:'https://tiles.example/{z}/{x}/{y}.png'}).some(map=>map.id==='openmaptiles-osm'),true);
