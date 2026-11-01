@@ -105,14 +105,14 @@ const protocolOptions = ["GT06", "Teltonika", "H02", "TK103", "Wialon IPS", "Oth
 const roleOptions = ["Company Admin", "Fleet Manager", "Dispatcher", "Supervisor", "Viewer"];
 const displayCompanyName = (name) => String(name ?? "").trim().toLowerCase() === "effy solutions" ? "INVIHA" : (name ?? "");
 const isAlMasarCompany = (company) => String(company?.name ?? company ?? "").trim().toLowerCase() === "al masar";
-const mapAccessOptions = [["googleRoad", "Google Maps Normal"], ["googleSatellite", "Google Maps Satellite"], ["googleHybrid", "Google Maps Hybrid"], ["bingHybrid", "Bing Hybrid"], ["bingRoad", "Bing Normal"], ["bingSatellite", "Bing Satellite"], ["hereHybrid", "HERE Hybrid"], ["hereNormal", "HERE Normal"], ["hereSatellite", "HERE Satellite"], ["mapboxHybrid", "MapBox Hybrid"], ["mapboxStreets", "MapBox Normal"], ["mapboxSatellite", "MapBox Satellite"], ["mapTilerBasic", "MapTiler Basic"], ["mapTilerSatellite", "MapTiler Satellite"], ["mapTilerStreets", "MapTiler Streets"], ["cartoLiberty", "MapTiles Liberty"], ["cartoPositron", "MapTiles Positron"], ["openMapTiles", "OpenMapTiles OSM (self-hosted URL)"], ["railElectrification", "OpenRailway Electrification"], ["railInfrastructure", "OpenRailway Infrastructure"], ["railMaxSpeeds", "OpenRailway Max Speeds"], ["railSignaling", "OpenRailway Signaling"], ["openStreetMap", "OpenStreetMap"], ["tomtomBasic", "TomTom Basic"], ["tomtomSatellite", "TomTom Satellite"], ["yandex", "Yandex"], ["cartoDark", "MapTiles Dark"], ["openTopoMap", "OpenTopoMap"], ["esriStreet", "Esri Street"], ["esriSatellite", "Esri Satellite"], ["mapillary", "Mapillary Street Imagery"]];
+const mapAccessOptions = [["googleRoad", "Google Maps Normal"], ["googleSatellite", "Google Maps Satellite"], ["googleHybrid", "Google Maps Hybrid"], ["openStreetMap", "OpenStreetMap"], ["mapillary", "Mapillary Street Imagery"]];
 const overlayMapAccessKeys = new Set(["railElectrification", "railInfrastructure", "railMaxSpeeds", "railSignaling", "mapillary"]);
 const baseMapAccessKeys = mapAccessOptions.filter(([key]) => !overlayMapAccessKeys.has(key)).map(([key]) => key);
 const geocoderOptions = [["nominatim", "Nominatim / OpenStreetMap"], ["geoapify", "Geoapify"], ["locationiq", "LocationIQ"], ["tomtom", "TomTom"], ["mapbox", "Mapbox"], ["here", "HERE"], ["maptiler", "MapTiler"], ["bing", "Bing Maps"]];
 const normalizedMapAccess = (value = {}) => {
   return Object.fromEntries(mapAccessOptions.map(([key]) => [key, value[key] ?? true]));
 };
-const defaultUserMapAccess = () => Object.fromEntries(mapAccessOptions.map(([key]) => [key, key === "openStreetMap"]));
+const defaultUserMapAccess = () => Object.fromEntries(mapAccessOptions.map(([key]) => [key, true]));
 const allUserMapAccess = () => Object.fromEntries(mapAccessOptions.map(([key]) => [key, true]));
 const GLOBAL_BRAND_KEY = "inviha_global_branding";
 const imageFileToDataUrl = (file, { maxDimension = 512, quality = 0.82 } = {}) => new Promise((resolve, reject) => {
@@ -1270,7 +1270,7 @@ function SupportPage({ data, setData }) {
 }
 function MapsAndGeocodingSettings({ f, setF }) {
   const set = (key, value) => setF({ ...f, [key]: value });
-  const maps = [["google-road", "Google Maps Normal"], ["google-satellite", "Google Maps Satellite"], ["google-hybrid", "Google Maps Hybrid"], ["bing-hybrid", "Bing Hybrid"], ["bing-road", "Bing Normal"], ["bing-satellite", "Bing Satellite"], ["here-hybrid", "HERE Hybrid"], ["here-normal", "HERE Normal"], ["here-satellite", "HERE Satellite"], ["mapbox-hybrid", "MapBox Hybrid"], ["mapbox-streets", "MapBox Normal"], ["mapbox-satellite", "MapBox Satellite"], ["maptiler-basic", "MapTiler Basic"], ["maptiler-satellite", "MapTiler Satellite"], ["maptiler-streets", "MapTiler Streets"], ["carto-liberty", "MapTiles Liberty"], ["carto-positron", "MapTiles Positron"], ["openmaptiles-osm", "OpenMapTiles OSM"], ["rail-electrification", "OpenRailway Electrification"], ["rail-infrastructure", "OpenRailway Infrastructure"], ["rail-maxspeed", "OpenRailway Max Speeds"], ["rail-signals", "OpenRailway Signaling"], ["osm-road", "OpenStreetMap"], ["tomtom-basic", "TomTom Basic"], ["tomtom-satellite", "TomTom Satellite"], ["yandex-road", "Yandex"], ["carto-dark", "MapTiles Dark"], ["open-topo", "OpenTopoMap"], ["esri-street", "Esri Street"], ["esri-satellite", "Esri Satellite"]];
+  const maps = [["google-road", "Google Maps Normal"], ["google-satellite", "Google Maps Satellite"], ["google-hybrid", "Google Maps Hybrid"], ["osm-road", "OpenStreetMap"]];
   const keyField = (key, label, help = "") => <label>{label}<input type="password" value={f[key] || ""} onChange={(e) => set(key, e.target.value)} autoComplete="new-password" />{help && <small>{help}</small>}</label>;
   return <Panel title="Maps & Geocoding"><div className="settingsForm mapsGeocodingSettings">
     <fieldset className="span2 legacyMaps"><legend>Default maps</legend><div className="legacyMapActions"><button type="button" onClick={() => set("enabledMaps", allUserMapAccess())}>Select all</button><button type="button" onClick={() => { setF({ ...f, enabledMaps: defaultUserMapAccess(), defaultBaseMap: "osm-road", mapProvider: "OpenStreetMap" }); }}>Deselect all</button></div>{mapAccessOptions.map(([key, label]) => <label key={key}><input type="checkbox" checked={normalizedMapAccess(f.enabledMaps)[key] !== false} onChange={(e) => set("enabledMaps", { ...normalizedMapAccess(f.enabledMaps), [key]: e.target.checked })} />{label}</label>)}</fieldset>
@@ -1287,12 +1287,7 @@ function MapsAndGeocodingSettings({ f, setF }) {
     <h4 className="span2">Map and street imagery keys</h4>
     {keyField("mapillaryAccessToken", "Mapillary access token", "Used only for street imagery.")}
     {keyField("googleMapsKey", "Google Maps browser key", "Used for Google Maps Normal, Satellite and Hybrid.")}
-    {keyField("mapTilerKey", "MapTiler browser key")}{keyField("mapboxToken", "Mapbox public token")}
-    {keyField("hereMapsKey", "HERE browser key")}{keyField("tomtomMapsKey", "TomTom browser key")}
-    {keyField("bingMapsKey", "Bing Maps browser key")}{keyField("yandexMapsKey", "Yandex Maps browser key")}
-    <label className="span2">OpenMapTiles self-hosted tile URL<input value={f.openMapTilesUrl || ""} onChange={(e) => set("openMapTilesUrl", e.target.value)} placeholder="https://maps.example.com/styles/osm/{z}/{x}/{y}.png" /><small>Include the {'{z}'}, {'{x}'} and {'{y}'} placeholders. This layer stays hidden until a URL is saved.</small></label>
-    <label>OpenMapTiles attribution<input value={f.openMapTilesAttribution || ""} onChange={(e) => set("openMapTilesAttribution", e.target.value)} placeholder="© OpenMapTiles © OpenStreetMap contributors" /></label>
-    <label>OpenMapTiles maximum zoom<input type="number" min="2" max="24" value={f.openMapTilesMaxZoom || 20} onChange={(e) => set("openMapTilesMaxZoom", Number(e.target.value))} /></label>
+    
     <h4 className="span2">Server geocoding keys</h4>
     {keyField("geoapifyKey", "Geoapify key")}{keyField("locationIqKey", "LocationIQ key")}
     {keyField("tomtomGeocodingKey", "TomTom geocoding key")}{keyField("mapboxGeocodingToken", "Mapbox geocoding token")}
