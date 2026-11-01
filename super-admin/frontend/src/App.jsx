@@ -1287,7 +1287,7 @@ function MapsAndGeocodingSettings({ f, setF }) {
     <h4 className="span2">Map and street imagery keys</h4>
     {keyField("mapillaryAccessToken", "Mapillary access token", "Used only for street imagery.")}
     {keyField("googleMapsKey", "Google Maps browser key", "Used for Google Maps Normal, Satellite and Hybrid.")}
-    
+
     <h4 className="span2">Server geocoding keys</h4>
     {keyField("geoapifyKey", "Geoapify key")}{keyField("locationIqKey", "LocationIQ key")}
     {keyField("tomtomGeocodingKey", "TomTom geocoding key")}{keyField("mapboxGeocodingToken", "Mapbox geocoding token")}
