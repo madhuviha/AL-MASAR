@@ -14,7 +14,7 @@ export const SETTINGS_SECTION_FIELDS = Object.freeze({
     "distanceUnit", "capacityUnit", "altitudeUnit", "distanceDecimals", "language"
   ]),
   maps: Object.freeze([
-    "mapProvider", "defaultBaseMap", "mapZoom", "mapCenterLatitude", "mapCenterLongitude", "enabledMaps",
+    "mapProvider", "defaultBaseMap", "mapZoom", "mapCenterLatitude", "mapCenterLongitude", "enabledMaps", "googleMapsKey",
     "mapillaryAccessToken", "mapTilerKey", "mapboxToken", "hereMapsKey", "tomtomMapsKey", "yandexMapsKey",
     "openMapTilesUrl", "openMapTilesAttribution", "openMapTilesMaxZoom", "geocoderPrimary", "geocoderFallback",
     "geocoderPrimaryApiUrl", "geocoderAddressApiUrl", "geocoderCacheEnabled", "geocoderCacheDays",

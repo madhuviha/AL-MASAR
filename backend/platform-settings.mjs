@@ -14,7 +14,7 @@ export const platformSettingsCategories=Object.freeze({
     'distanceUnit','capacityUnit','altitudeUnit','distanceDecimals','language'
   ]),
   maps:Object.freeze([
-    'mapProvider','defaultBaseMap','mapZoom','mapCenterLatitude','mapCenterLongitude','enabledMaps',
+    'mapProvider','defaultBaseMap','mapZoom','mapCenterLatitude','mapCenterLongitude','enabledMaps','googleMapsKey',
     'mapillaryAccessToken','mapTilerKey','mapboxToken','hereMapsKey','tomtomMapsKey','yandexMapsKey',
     'openMapTilesUrl','openMapTilesAttribution','openMapTilesMaxZoom','geocoderPrimary',
     'geocoderFallback','geocoderPrimaryApiUrl','geocoderAddressApiUrl','geocoderCacheEnabled',
@@ -30,7 +30,7 @@ export const platformSettingsCategories=Object.freeze({
 });
 
 export const platformSecretSettingKeys=new Set([
-  'mapillaryAccessToken','mapTilerKey','mapboxToken','hereMapsKey','tomtomMapsKey',
+  'googleMapsKey','mapillaryAccessToken','mapTilerKey','mapboxToken','hereMapsKey','tomtomMapsKey',
   'yandexMapsKey','geoapifyKey','locationIqKey','tomtomGeocodingKey',
   'mapboxGeocodingToken','hereGeocodingKey','mapTilerGeocodingKey','bingMapsKey',
   'streetviewApiKey','captchaSiteKey','captchaSecretKey'

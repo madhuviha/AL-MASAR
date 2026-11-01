@@ -2,14 +2,7 @@ const booleanOr=(value,fallback)=>typeof value==='boolean'?value:fallback;
 
 export const mapAccessDefinitions=[
  ['googleRoad','google-road','Google Maps Normal'],['googleSatellite','google-satellite','Google Maps Satellite'],['googleHybrid','google-hybrid','Google Maps Hybrid'],
- ['bingRoad','bing-road','Bing Normal'],['bingSatellite','bing-satellite','Bing Satellite'],['bingHybrid','bing-hybrid','Bing Hybrid'],
- ['openStreetMap','osm-road','OpenStreetMap'],['cartoLiberty','carto-liberty','MapTiles Liberty'],['cartoPositron','carto-positron','MapTiles Positron'],['cartoDark','carto-dark','MapTiles Dark'],['openTopoMap','open-topo','OpenTopoMap'],
- ['esriStreet','esri-street','Esri Street'],['esriSatellite','esri-satellite','Esri Satellite'],['mapTilerBasic','maptiler-basic','MapTiler Basic'],['mapTilerStreets','maptiler-streets','MapTiler Streets'],['mapTilerSatellite','maptiler-satellite','MapTiler Satellite'],
- ['mapboxStreets','mapbox-streets','MapBox Normal'],['mapboxSatellite','mapbox-satellite','MapBox Satellite'],['mapboxHybrid','mapbox-hybrid','MapBox Hybrid'],
- ['hereNormal','here-normal','HERE Normal'],['hereSatellite','here-satellite','HERE Satellite'],['hereHybrid','here-hybrid','HERE Hybrid'],
- ['tomtomBasic','tomtom-basic','TomTom Basic'],['tomtomSatellite','tomtom-satellite','TomTom Satellite'],['yandex','yandex-road','Yandex'],
- ['openMapTiles','openmaptiles-osm','OpenMapTiles OSM (self-hosted URL)'],
- ['railElectrification','rail-electrification','OpenRailway Electrification'],['railInfrastructure','rail-infrastructure','OpenRailway Infrastructure'],['railMaxSpeeds','rail-maxspeed','OpenRailway Max Speeds'],['railSignaling','rail-signals','OpenRailway Signaling']
+ ['openStreetMap','osm-road','OpenStreetMap']
 ];
 
 const accessDefaults=Object.fromEntries(mapAccessDefinitions.map(([key])=>[key,true]));
@@ -63,8 +56,18 @@ export function availableMaps(access,settings={}){
 
 export function defaultBaseMap(settings={},access={},userPreference=''){
  const maps=availableMaps(access,settings),ids=new Set(maps.map(map=>map.id));
- if(ids.has(userPreference))return userPreference;
- if(ids.has(settings.defaultBaseMap))return settings.defaultBaseMap;
+ const normalizePreference=value=>{
+  const raw=String(value||'').trim().toLowerCase();
+  if(ids.has(raw))return raw;
+  if(raw.includes('google')&&raw.includes('satellite'))return 'google-satellite';
+  if(raw.includes('google')&&raw.includes('hybrid'))return 'google-hybrid';
+  if(raw.includes('google'))return 'google-road';
+  if(raw.includes('openstreet')||raw==='osm')return 'osm-road';
+  return '';
+ };
+ const requested=normalizePreference(userPreference),saved=normalizePreference(settings.defaultBaseMap);
+ if(requested&&ids.has(requested))return requested;
+ if(saved&&ids.has(saved))return saved;
  const preferred=settings.mapStyle==='satellite'?'esri-satellite':'osm-road';
  return ids.has(preferred)?preferred:maps[0]?.id||'osm-road';
 }
