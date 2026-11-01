@@ -6,12 +6,13 @@ export const mapAccessDefinitions=[
 ];
 
 const accessDefaults=Object.fromEntries(mapAccessDefinitions.map(([key])=>[key,true]));
+const hasExplicitBasePreference=value=>Boolean(value&&typeof value==='object'&&mapAccessDefinitions.some(([key])=>Object.prototype.hasOwnProperty.call(value,key)));
 
 export function normalizeMapAccess(value={}){
- const raw=value&&typeof value==='object'?value:{},access={};
- for(const [key] of mapAccessDefinitions)access[key]=booleanOr(raw[key],accessDefaults[key]);
- access.mapillary=booleanOr(raw.mapillary,true);
- if(!mapAccessDefinitions.some(([key])=>access[key]))access.openStreetMap=true;
+ const raw=value&&typeof value==='object'?value:{},explicit=hasExplicitBasePreference(raw),access={};
+ for(const [key] of mapAccessDefinitions)access[key]=explicit?raw[key]===true:booleanOr(raw[key],accessDefaults[key]);
+ access.mapillary=explicit?raw.mapillary===true:booleanOr(raw.mapillary,true);
+ if(!explicit&&!mapAccessDefinitions.some(([key])=>access[key]))access.openStreetMap=true;
  return access;
 }
 
