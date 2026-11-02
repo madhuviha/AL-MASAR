@@ -698,7 +698,6 @@ app.post('/api/vehicles/:id/immobilizer',requireAuth,async(req,res)=>{
  if(v.expired)return rejectExpiredVehicle(res);
   if(req.user.role!=='super_admin'&&v.company_metadata?.vehiclePermissions?.Immobilizer!==true)return res.status(403).json({error:'Immobilizer permission is not enabled for this company.'});
  const lock=await client.query('SELECT pg_try_advisory_lock(78424,$1::int) AS locked',[id]);locked=lock.rows[0]?.locked;if(!locked)return res.status(409).json({error:'Another command is in progress.'});
- const cooldown=await client.query("SELECT id FROM audit_events WHERE entity_type='vehicle' AND entity_id=$1 AND action='immobilizer_requested' AND created_at>NOW()-INTERVAL '60 seconds' LIMIT 1",[String(id)]);if(cooldown.rows.length)return res.status(409).json({error:'Wait 60 seconds before another command. Check tracker feedback first.'});
  const live=await readLiveSnapshots(),position=live.rows.find(p=>String(p.id)===String(v.traccar_device_id));let command;try{command=immobilizerCommand(v,position,req.body.action)}catch(e){return res.status(400).json({error:e.message})}
  const devices=await apiDevices();if(devices.find(d=>String(d.id)===String(v.traccar_device_id))?.status!=='online')return res.status(409).json({error:'Tracker must be online. Offline commands are not submitted.'});
  const types=await trackingApi.get('/api/commands/types',{params:{deviceId:v.traccar_device_id,textChannel:false}});if(!types.data.some(t=>t.type==='custom'))return res.status(400).json({error:'This tracker does not support the configured command.'});
