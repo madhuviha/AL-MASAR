@@ -21,6 +21,18 @@ test('defaults to Currently Untracked after fifteen minutes without communicatio
  assert.equal(status.group,'untracked');
 });
 
+test('a stopped vehicle with ignition on remains Idle',()=>{
+ const now=Date.now();
+ const status=mapStatus({device:{lastUpdate:new Date(now-30000).toISOString()},position:{valid:true,latitude:25.2,longitude:51.5,serverTime:new Date(now-30000).toISOString(),speed:0,attributes:{ignition:'true'}}},{offlineMinutes:300},now);
+ assert.equal(status.group,'idle');
+});
+
+test('ignition from the vehicle snapshot is used when position attributes are empty',()=>{
+ const now=Date.now();
+ const status=mapStatus({ignition:true,device:{lastUpdate:new Date(now-30000).toISOString()},position:{valid:true,latitude:25.2,longitude:51.5,serverTime:new Date(now-30000).toISOString(),speed:0,attributes:{}}},{offlineMinutes:300},now);
+ assert.equal(status.group,'idle');
+});
+
 test('latest communication prefers a fresh heartbeat over an older GPS position',()=>{
  const now=Date.now();
  const heartbeat=new Date(now-3*60000).toISOString();

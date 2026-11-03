@@ -1,10 +1,10 @@
 import {engineState} from './telemetry-state.mjs';
 // Shared communication timing; GPS fix validity is a separate label.
 const finite=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));
-const bool=v=>v===true||v===1||v==='1'||v==='true'?true:v===false||v===0||v==='0'||v==='false'?false:null;
+const bool=v=>v===true||v===1||v==='1'||v==='true'||v==='on'||v==='ON'?true:v===false||v===0||v==='0'||v==='false'||v==='off'||v==='OFF'?false:null;
 export function mapStatus(v,settings={},now=Date.now()){
  if(v?.expired===true||v?.liveAccess===false||v?.live_access===false||v?.accessStatus==='expired'||v?.access_status==='expired'||v?.local?.expired===true||v?.local?.liveAccess===false||v?.local?.accessStatus==='expired')return {operating:'expired',group:'expired',gps:'Renewal required',ignition:null,engine:null,speed:null,age:Infinity,fresh:false};
- const p=v?.position,a=p?.attributes||{},ignition=bool(a.ignition??a.ignitionOn),motion=bool(a.motion??a.movement);
+ const p=v?.position,a=p?.attributes||{},ignition=bool(a.ignition??a.ignitionOn??v?.ignition),motion=bool(a.motion??a.movement??v?.motion);
  const speed=finite(p?.speed)?Number(p.speed)*1.852:finite(v?.speed)?Number(v.speed):null;
  const configured=Number(v?.local?.accuracy?.minMovingSpeed??v?.accuracy?.minMovingSpeed??3),minimum=Number.isFinite(configured)&&configured>=0&&configured<=30?configured:3;
  const received=[p?.serverTime,v?.device?.lastUpdate].map(x=>Date.parse(x)).filter(Number.isFinite);

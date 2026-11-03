@@ -580,10 +580,17 @@ function deriveStatus(live,metadata={}){
   if(live.valid===false) return 'untracked';
   const speedKph=Number(live.speed||0)*1.852;const minimum=Math.max(0,Number(metadata.accuracy?.minMovingSpeed??3));
   const attrs=parseAttrs(live.attributes);
-  if(live.speed!=null ? speedKph>minimum : [true,1,'1','true'].includes(attrs.motion)) return 'moving';
-  if(attrs.ignition===true && speedKph<=minimum) return 'idle';
-  if((attrs.ignition===false || live.speed!=null && speedKph<=minimum || attrs.motion===false) && speedKph<=minimum) return 'parked';
-  return 'stopped';
+  // Tracker I/O values may arrive as booleans, numbers, or strings. Normalize
+  // them before deriving the state so a stopped vehicle with ignition ON stays
+  // Idle (for example while waiting at a red light), rather than Parked.
+  const ignitionOn=[true,1,'1','true','on','ON'].includes(attrs.ignition);
+  const ignitionOff=[false,0,'0','false','off','OFF'].includes(attrs.ignition);
+  const motionOn=[true,1,'1','true','on','ON'].includes(attrs.motion);
+  const motionOff=[false,0,'0','false','off','OFF'].includes(attrs.motion);
+  if((live.speed!=null && speedKph>minimum)||(live.speed==null&&motionOn)) return 'moving';
+  if(speedKph<=minimum && ignitionOn) return 'idle';
+  if(speedKph<=minimum && (ignitionOff||motionOff)) return 'parked';
+  return speedKph<=minimum ? 'parked' : 'stopped';
 }
 
 app.get('/api/live-health', requireAuth, requireSuper, async (_req,res)=>{
