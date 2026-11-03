@@ -21,9 +21,8 @@ export function immobilizerCommand(vehicle,position,action,now=Date.now()){
  if(!isTeltonika&&!isGt06)throw Error('Immobilizer is supported only for Teltonika and GT06 trackers.');
  if(isTeltonika&&(c?.enabled!==true||!Number.isInteger(output)||output<1||output>4||![0,1].includes(c.immobilizeLevel)))throw Error('A super administrator must configure a verified Teltonika DOUT1–DOUT4 relay first.');
  const speed=Number(position?.speed);
- if(position?.speed==null||!Number.isFinite(speed)||speed<0||speed*1.852>1)throw Error('Vehicle must be stationary before using the immobilizer.');
- const a=typeof position.attributes==='string'?JSON.parse(position.attributes):position.attributes||{};
- if(![false,0,'0','false'].includes(a.ignition))throw Error('Ignition must be OFF before using the immobilizer.');
+ if(position?.speed==null||!Number.isFinite(speed)||speed<0)throw Error('Vehicle speed is unavailable.');
+ if(speed>0)throw Error('Stop the vehicle before using the immobilizer.');
  if(isGt06)return {deviceId:Number(vehicle.traccar_device_id),type:'custom',textChannel:false,attributes:{data:action==='on'?'RELAY,1#':'RELAY,0#'}};
  const level=action==='on'?c.immobilizeLevel:1-c.immobilizeLevel;
  return {deviceId:Number(vehicle.traccar_device_id),type:'custom',textChannel:false,attributes:{data:digitalOutputCommand(vehicle,output,level)}};
