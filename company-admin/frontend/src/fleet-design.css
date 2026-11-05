@@ -264,19 +264,25 @@ button,input,select,textarea{font-family:Arial,sans-serif!important}
 .statusCard .legend>div>strong small{font-size:11px;color:#64748b;font-weight:500}
 @media(max-width:900px){.statusCard .donutWrap{grid-template-columns:1fr;gap:14px}.statusCard .donutWrap>div:first-child{margin-inline:auto}}
 
-/* Shared rectangular ON/OFF control used by rules, settings, and modal forms. */
-.onoffswitch,.appShell .switch{position:relative;width:90px;height:30px;flex:0 0 90px;user-select:none}
-.onoffswitch-checkbox,.appShell .switch>input{position:absolute;opacity:0;pointer-events:none}
-.onoffswitch-label,.appShell .switch>i{display:block;position:absolute;inset:0;overflow:hidden;cursor:pointer;border:2px solid #999;background:#ccc;border-radius:0!important}
-.onoffswitch-inner,.appShell .switch>i{display:block;width:200%;height:30px;margin-left:-100%;transition:margin .3s ease-in 0s;box-sizing:border-box;position:relative}
-.onoffswitch-inner:before,.onoffswitch-inner:after,.appShell .switch>i:before,.appShell .switch>i:after{display:block;float:left;width:50%;height:26px;padding:0;line-height:26px;font-size:14px;color:#fff;font-family:Arial,sans-serif;font-weight:bold;box-sizing:border-box;border:2px solid transparent;background-clip:padding-box}
-.onoffswitch-inner:before,.appShell .switch>i:before{content:"ON";padding-left:10px;background:#2e8def;color:#fff}
-.onoffswitch-inner:after,.appShell .switch>i:after{content:"OFF";padding-right:10px;background:#ccc;color:#333;text-align:right}
-.onoffswitch-switch,.appShell .switch>i{ }
-.onoffswitch-switch{display:block;width:25px;margin:0;background:#000;position:absolute;top:0;bottom:0;right:65px;transition:all .3s ease 0s}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner,.appShell .switch>input:checked + i{margin-left:0}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch{right:0}
-.appShell .switch>i:after{content:"OFF"}
+/* Compact rectangular ON/OFF control used by rules, settings, and modal forms. */
+.onoffswitch,.appShell .switch{position:relative;display:inline-flex;width:78px;height:24px;flex:0 0 78px;margin:0;user-select:none;vertical-align:middle}
+.onoffswitch-checkbox,.appShell .switch>input{position:absolute;width:1px;height:1px;margin:-1px;opacity:0;pointer-events:none}
+.onoffswitch-label,.appShell .switch>i{position:relative;display:block;inset:auto;width:100%;height:100%;overflow:hidden;cursor:pointer;border:1px solid #9eafbf;background:#d7dde3;border-radius:2px!important;box-sizing:border-box;transition:background .18s ease,border-color .18s ease}
+.onoffswitch-inner{display:flex;width:200%;height:100%;margin-left:-100%;transition:margin .18s ease;box-sizing:border-box}
+.onoffswitch-inner:before,.onoffswitch-inner:after{display:flex;align-items:center;justify-content:center;width:50%;height:100%;padding:0;font:700 10px/1 Arial,sans-serif;box-sizing:border-box}
+.onoffswitch-inner:before{content:"ON";color:#fff;background:#2587ef}
+.onoffswitch-inner:after{content:"OFF";color:#334b63;background:#d7dde3}
+.onoffswitch-switch{display:none}
+.onoffswitch-checkbox:checked + .onoffswitch-label{border-color:#2587ef}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner{margin-left:0}
+.appShell .switch>i:before,.appShell .switch>i:after{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;width:50%;padding:0;font:700 10px/1 Arial,sans-serif;box-sizing:border-box;transition:color .18s ease,background .18s ease,transform .18s ease}
+.appShell .switch>i:before{left:0;content:"ON";color:#fff;background:#2587ef;transform:translateX(-100%)}
+.appShell .switch>i:after{right:0;content:"OFF";color:#334b63;background:#d7dde3}
+.appShell .switch>input:checked+i{border-color:#2587ef;background:#2587ef}
+.appShell .switch>input:checked+i:before{transform:translateX(0)}
+.appShell .switch>input:checked+i:after{color:transparent;background:#2587ef}
+.appShell .switch>input:focus-visible+i,.onoffswitch-checkbox:focus-visible + .onoffswitch-label{outline:2px solid #0b75d1;outline-offset:2px}
+.appShell .switch>input:disabled+i,.onoffswitch-checkbox:disabled + .onoffswitch-label{opacity:.55;cursor:not-allowed}
 .lockedMapPage,
 .lockedMapPage *{font-family:Arial,Helvetica,sans-serif!important}
 .lockedMapPage .mapVehicleIdentity{min-width:0!important}
