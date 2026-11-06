@@ -87,6 +87,21 @@ const stateColor=s=>({expired:'#dc2626',moving:'#16b364',idle:'#f5a524',parked:'
 const fileDownload=(name,body,type='text/plain')=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([body],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 const csv=v=>`"${String(v??'').replaceAll('"','""')}"`;
 const hav=(a,b)=>{const R=6371000,toR=n=>n*Math.PI/180,dLat=toR(b.lat-a.lat),dLon=toR(b.lng-a.lng),la1=toR(a.lat),la2=toR(b.lat);const q=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(q))};
+const clusterVehicleRows=(rows,radiusMeters=600)=>{
+  const groups=[];
+  rows.forEach(vehicle=>{
+    const lat=Number(vehicle.position?.latitude),lng=Number(vehicle.position?.longitude);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng))return;
+    const group=groups.find(item=>hav(item.center,{lat,lng})<=radiusMeters);
+    if(!group){groups.push({center:{lat,lng},items:[vehicle]});return}
+    group.items.push(vehicle);
+    group.center={
+      lat:group.items.reduce((sum,item)=>sum+Number(item.position.latitude),0)/group.items.length,
+      lng:group.items.reduce((sum,item)=>sum+Number(item.position.longitude),0)/group.items.length
+    };
+  });
+  return groups;
+};
 const inPoly=(p,pts)=>{let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const xi=pts[i][1],yi=pts[i][0],xj=pts[j][1],yj=pts[j][0];const cross=((yi>p.lat)!==(yj>p.lat))&&(p.lng<(xj-xi)*(p.lat-yi)/(yj-yi||1e-12)+xi);if(cross)inside=!inside}return inside};
 
 const imageOf=v=>v?.local?.imageUrl||v?.local?.imageData||v?.imageUrl||'';
@@ -467,7 +482,7 @@ function VehicleStatusList({vehicles,selected,setSelected,onGeofences,onVehicles
  const statusCount=key=>key==='all'?classified.length:classified.filter(({status})=>status.group===key).length;
  const visibleRows=classified.filter(({v,status})=>(statusFilter==='all'||status.group===statusFilter)&&[v.name,v.plate,v.local?.id,v.id,v.currentDriver?.name].join(' ').toLowerCase().includes(q.trim().toLowerCase()));
  const vehicleRow=({v,status})=><div key={v.id} data-state={status.group} className={'mapVehicleRow '+(selected?.id===v.id?'selected':'')}>
-  <button className="mapVehicleMain" onClick={()=>act(setSelected,v)}><span className="catIcon">{imageOf(v)?<VehicleImage v={v}/>:<VehicleSymbol category={v.category}/>}</span><span className="mapVehicleIdentity"><b><span className="mapVehicleName">{v.name}</span><em className="mapVehicleBadge">{status.group==='moving'?'Online':stateLabel(status.group)}</em></b><small>ID {v.local?.id??v.id}{v.plate?` · ${v.plate}`:''}{v.currentDriver?.name?` · ${v.currentDriver.name}`:''}</small><small className="mapVehicleUpdated"><Clock3/> {cardUpdatedAt(v)} <span className="mapVehicleAge">({communicationAgeLabel(v)})</span></small></span><span className="mapVehicleState"><strong key={status.speed} className="mapRowSpeed"><span className="speedNumber">{status.speed==null?'—':Math.round(status.speed)}</span> <small>Kph</small></strong><span className="mapVehicleSignals"><EngineIndicator value={status.group==='moving'?true:engineState(v.position)} source={v.position?.telemetry?.engineSource} iconOnly/></span></span></button>
+  <button className="mapVehicleMain" onClick={()=>act(setSelected,v)}><span className="catIcon">{imageOf(v)?<VehicleImage v={v}/>:<VehicleSymbol category={v.category}/>}</span><span className="mapVehicleIdentity"><b><span className="mapVehicleName">{v.name}</span><em className="mapVehicleBadge">{status.group==='moving'?'Online':stateLabel(status.group)}</em></b><small>{[v.plate,v.currentDriver?.name].filter(Boolean).join(' · ')||'Not identified'}</small><small className="mapVehicleUpdated"><Clock3/> {cardUpdatedAt(v)} <span className="mapVehicleAge">({communicationAgeLabel(v)})</span></small></span><span className="mapVehicleState"><strong key={status.speed} className="mapRowSpeed"><span className="speedNumber">{status.speed==null?'—':Math.round(status.speed)}</span> <small>Kph</small></strong><span className="mapVehicleSignals"><EngineIndicator value={status.group==='moving'?true:engineState(v.position)} source={v.position?.telemetry?.engineSource} iconOnly/></span></span></button>
 
   <button className="mapVehicleMore" aria-label={'Actions for '+v.name} aria-expanded={menu?.id===v.id} onClick={e=>toggleMenu(e,v)}><span className="actionDots" aria-hidden="true"><b/><b/><b/></span></button>
  </div>;
@@ -699,11 +714,40 @@ function LiveVehiclePanel({vehicle,company,store,mapAccess}){
     </div>}
   </aside>
 }
+function VehicleClusterMarker({group}){
+  const map=useMap();
+  const ids=group.items.map(vehicle=>vehicle.id).sort().join('-');
+  const icon=L.divIcon({
+    className:'vehicle-cluster-marker-wrap',
+    html:`<div class="vehicle-cluster-marker"><span>${group.items.length}</span></div>`,
+    iconSize:[44,44],
+    iconAnchor:[22,22]
+  });
+  return <Marker
+    key={`cluster-${ids}`}
+    position={[group.center.lat,group.center.lng]}
+    icon={icon}
+    eventHandlers={{click:()=>{
+      const zoom=Math.min((map.getZoom?.()||11)+2,18);
+      map.setView([group.center.lat,group.center.lng],zoom,{animate:true});
+    }}}
+  >
+    <Popup>
+      <div className="vehicle-cluster-popup">
+        <b>{group.items.length} vehicles nearby</b>
+        <small>{group.items.map(vehicle=>vehicle.name||'Vehicle').join(', ')}</small>
+      </div>
+    </Popup>
+  </Marker>;
+}
+
 function MapPage({vehicles,selected,setSelected,setPage,alerts,store,setStore,company,toast,userRole,userPermissions}){
  const mapRef=useRef(null);
  const mapConfig=useMapConfig(),availableMaps=mapConfig?.maps||[];
  const [mapTab,setMapTab]=useState('Vehicles');const [trail,setTrail]=useState(false),[trailMinutes,setTrailMinutes]=useState(()=>Math.max(1,Math.min(1440,Number(localStorage.getItem('inviha.trailMinutes'))||30))),[locationRequest,setLocationRequest]=useState(0),[trailStatus,setTrailStatus]=useState(''),[moreTools,setMoreTools]=useState(false),[labels,setLabels]=useState(()=>localStorage.getItem('inviha.vehicleLabels')==='1'),[fitRequest,setFitRequest]=useState(0);
   useEffect(()=>{localStorage.setItem('inviha.vehicleLabels',labels?'1':'0')},[labels]);
+  const [clusterEnabled,setClusterEnabled]=useState(()=>localStorage.getItem('inviha.mapClustering')!=='0');
+  useEffect(()=>{localStorage.setItem('inviha.mapClustering',clusterEnabled?'1':'0')},[clusterEnabled]);
   const [follow,setFollow]=useState(false);const markerRefs=useRef({});useEffect(()=>{if(selected?.id!=null&&layers.vehicles)markerRefs.current[String(selected.id)]?.openPopup()},[selected?.id]);
   const [mapStyle,setMapStyle]=useState('');
   useEffect(()=>{if(!availableMaps.length)return;setMapStyle(current=>availableMaps.some(map=>map.id===current)?current:(mapConfig.defaultBase||availableMaps[0].id))},[mapConfig]);
@@ -721,6 +765,9 @@ function MapPage({vehicles,selected,setSelected,setPage,alerts,store,setStore,co
   const points=vehicles
     .filter(v=>Number.isFinite(v.position?.latitude)&&Number.isFinite(v.position?.longitude))
     .map(v=>[v.position.latitude,v.position.longitude]);
+  const locatedVehicles=useMemo(()=>vehicles.filter(v=>Number.isFinite(v.position?.latitude)&&Number.isFinite(v.position?.longitude)),[vehicles]);
+  const vehicleClusters=useMemo(()=>clusterVehicleRows(locatedVehicles),[locatedVehicles]);
+  const singleMapVehicles=clusterEnabled?vehicleClusters.filter(group=>group.items.length===1).map(group=>group.items[0]):locatedVehicles;
   const activePoints=vehicles
     .filter(v=>Number.isFinite(v.position?.latitude)&&Number.isFinite(v.position?.longitude)&&!['offline','untracked','never'].includes(mapStatus(v,company.settings).group))
     .map(v=>[v.position.latitude,v.position.longitude]);
@@ -827,9 +874,12 @@ function MapPage({vehicles,selected,setSelected,setPage,alerts,store,setStore,co
             points={initialFocusPoints}
           />
 
-          {layers.vehicles&&vehicles
-            .filter(v=>Number.isFinite(v.position?.latitude)&&Number.isFinite(v.position?.longitude))
-            .map(v=>{
+          {layers.vehicles&&clusterEnabled&&vehicleClusters
+            .filter(group=>group.items.length>1)
+            .map(group=><VehicleClusterMarker key={`cluster-${group.items.map(vehicle=>vehicle.id).sort().join('-')}`} group={group}/>)
+          }
+
+          {layers.vehicles&&singleMapVehicles.map(v=>{
 
               const p=v.position;
               const presentation=mapStatus(v,company.settings),ignition=presentation.ignition;const markerState=['untracked','offline','never'].includes(presentation.group)?presentation.group:presentation.operating;const popupStatus=presentation.group==='offline'?'Offline':presentation.group==='untracked'?'Currently Untracked':stateLabel(presentation.operating);
@@ -857,8 +907,7 @@ function MapPage({vehicles,selected,setSelected,setPage,alerts,store,setStore,co
                 }}
               >
 </SmoothMarker>
-            })
-          }
+          })}
 
         </MapContainer>
 
@@ -870,6 +919,7 @@ function MapPage({vehicles,selected,setSelected,setPage,alerts,store,setStore,co
 <button title="Playback" onClick={()=>setPage('playback')}><History/></button>
 <button title="Full screen" onClick={e=>{const page=e.currentTarget.closest('.lockedMapPage');if(document.fullscreenElement)document.exitFullscreen?.();else page?.requestFullscreen?.()}}><Maximize/></button>
 <button title="Map layers" onClick={()=>setLayerMenu(x=>!x)}><Layers3/></button>
+<button title={clusterEnabled?'Disable vehicle clustering':'Enable vehicle clustering'} aria-label={clusterEnabled?'Disable vehicle clustering':'Enable vehicle clustering'} className={clusterEnabled?'active':''} onClick={()=>setClusterEnabled(x=>!x)}><CircleDot/></button>
 <button title="My current location" aria-label="My current location" onClick={()=>{setFollow(false);setLocationRequest(x=>x+1)}}><LocateFixed/></button>
 <button title="Locate vehicle" onClick={()=>{if(selected?.position)setFollow(true);else toast('Select a vehicle first')}}><Navigation/></button>
 <button title="Live route trail" className={trail?'active':''} onClick={()=>setTrail(x=>!x)}><Route/></button>

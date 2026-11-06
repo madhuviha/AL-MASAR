@@ -249,7 +249,7 @@ html,body,#root{max-width:100%;min-width:0;overflow-x:hidden}.productionLogin,.p
 html,body,#root{font-family:Arial,sans-serif!important;font-size:14px}
 button,input,select,textarea{font-family:Arial,sans-serif!important}
 .appShell .speedometer,.appShell [class*="speedometer"],.appShell [class*="gauge"],.appShell .speedValue,.appShell .speedNumber{border-radius:0!important}
-.appShell .switch,.appShell .toggleLine,.appShell .switchLine,.appShell .switch i{border-radius:0!important}
+.appShell .switch i{border-radius:4px!important}
 .appShell .donutWrap,.appShell .statusChart,.appShell .pieChart,.appShell .chartCard,.appShell .dashboardCard,.appShell .statCard{border-radius:0!important}
 
 /* Dashboard status chart: match the reference donut + detailed status list. */
@@ -264,30 +264,47 @@ button,input,select,textarea{font-family:Arial,sans-serif!important}
 .statusCard .legend>div>strong small{font-size:11px;color:#64748b;font-weight:500}
 @media(max-width:900px){.statusCard .donutWrap{grid-template-columns:1fr;gap:14px}.statusCard .donutWrap>div:first-child{margin-inline:auto}}
 
-/* Compact rectangular ON/OFF control used by rules, settings, and modal forms. */
-.onoffswitch,.appShell .switch{position:relative;display:inline-flex;width:78px;height:24px;flex:0 0 78px;margin:0;user-select:none;vertical-align:middle}
+/* Segmented ON/OFF control used consistently across rules, settings, and modal forms. */
+.onoffswitch,.appShell .switch{position:relative;display:inline-flex;width:82px;height:27px;flex:0 0 82px;margin:0;user-select:none;vertical-align:middle}
 .onoffswitch-checkbox,.appShell .switch>input{position:absolute;width:1px;height:1px;margin:-1px;opacity:0;pointer-events:none}
-.onoffswitch-label,.appShell .switch>i{position:relative;display:block;inset:auto;width:100%;height:100%;overflow:hidden;cursor:pointer;border:1px solid #9eafbf;background:#d7dde3;border-radius:2px!important;box-sizing:border-box;transition:background .18s ease,border-color .18s ease}
-.onoffswitch-inner{display:flex;width:200%;height:100%;margin-left:-100%;transition:margin .18s ease;box-sizing:border-box}
-.onoffswitch-inner:before,.onoffswitch-inner:after{display:flex;align-items:center;justify-content:center;width:50%;height:100%;padding:0;font:700 10px/1 Arial,sans-serif;box-sizing:border-box}
-.onoffswitch-inner:before{content:"ON";color:#fff;background:#2587ef}
-.onoffswitch-inner:after{content:"OFF";color:#334b63;background:#d7dde3}
+.onoffswitch-label,.appShell .switch>i{position:relative;display:block;inset:auto;width:100%;height:100%;overflow:hidden;cursor:pointer;border:1px solid #9eafbf;background:#e7edf2;border-radius:4px!important;box-sizing:border-box;transition:border-color .18s ease,background-color .18s ease!important;animation:none!important}
+.onoffswitch-inner{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:1fr!important;gap:1px;width:100%;height:100%;margin:0;background:#9eafbf;box-sizing:border-box}
+.onoffswitch-inner:before,.onoffswitch-inner:after{position:static!important;inset:auto!important;display:flex!important;grid-row:1!important;align-items:center;justify-content:center;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;padding:0;font:500 10px/1 Arial,sans-serif;box-sizing:border-box;border-radius:0!important;transform:none!important;transition:color .18s ease,background-color .18s ease!important;animation:none!important}
+.onoffswitch-inner:before{grid-column:1!important}
+.onoffswitch-inner:after{grid-column:2!important}
+.onoffswitch-inner:before{content:"ON";color:#5c7083;background:#e7edf2}
+.onoffswitch-inner:after{content:"OFF";color:#334b63;background:#fff}
 .onoffswitch-switch{display:none}
-.onoffswitch-checkbox:checked + .onoffswitch-label{border-color:#2587ef}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner{margin-left:0}
-.appShell .switch>i:before,.appShell .switch>i:after{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;width:50%;padding:0;font:700 10px/1 Arial,sans-serif;box-sizing:border-box;transition:color .18s ease,background .18s ease,transform .18s ease}
-.appShell .switch>i:before{left:0;content:"ON";color:#fff;background:#2587ef;transform:translateX(-100%)}
-.appShell .switch>i:after{right:0;content:"OFF";color:#334b63;background:#d7dde3}
-.appShell .switch>input:checked+i{border-color:#2587ef;background:#2587ef}
-.appShell .switch>input:checked+i:before{transform:translateX(0)}
-.appShell .switch>input:checked+i:after{color:transparent;background:#2587ef}
+.onoffswitch-checkbox:checked + .onoffswitch-label{border-color:#0aa95f;background:#0aa95f}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner:before{color:#fff;background:#0aa95f}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner:after{color:#6f7f8e;background:#e7edf2}
+.appShell .switch>i{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:1fr!important;align-items:stretch;gap:1px;background:#9eafbf}
+.appShell .switch>i:before,.appShell .switch>i:after{position:static!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;display:flex!important;grid-row:1!important;align-items:center;justify-content:center;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;padding:0;font:500 10px/1 Arial,sans-serif;box-sizing:border-box;border-radius:0!important;transform:none!important;transition:color .18s ease,background-color .18s ease!important;animation:none!important}
+.appShell .switch>i:before{grid-column:1!important;content:"ON";color:#5c7083;background:#e7edf2}
+.appShell .switch>i:after{grid-column:2!important;content:"OFF";color:#334b63;background:#fff}
+.appShell .switch>input:checked+i{border-color:#0aa95f;background:#0aa95f}
+.appShell .switch>input:checked+i:before{color:#fff;background:#0aa95f}
+.appShell .switch>input:checked+i:after{color:#6f7f8e;background:#e7edf2}
+.appShell .switch>input:checked+i:after{left:auto!important;right:auto!important;transform:none!important}
 .appShell .switch>input:focus-visible+i,.onoffswitch-checkbox:focus-visible + .onoffswitch-label{outline:2px solid #0b75d1;outline-offset:2px}
 .appShell .switch>input:disabled+i,.onoffswitch-checkbox:disabled + .onoffswitch-label{opacity:.55;cursor:not-allowed}
+
+/* Checkbox-based form toggles use the same segmented appearance without changing their behavior. */
+.appShell .toggleLine,.appShell .switchLine{position:relative;display:inline-flex!important;flex-direction:row!important;align-items:center;gap:10px;min-height:27px;padding-left:92px}
+.appShell .toggleLine>input[type=checkbox],.appShell .switchLine>input[type=checkbox]{position:absolute;width:1px;height:1px;margin:-1px;opacity:0;pointer-events:none}
+.appShell .toggleLine::before,.appShell .toggleLine::after,.appShell .switchLine::before,.appShell .switchLine::after{position:absolute;top:0;display:flex;align-items:center;justify-content:center;height:27px;font:500 10px/1 Arial,sans-serif;box-sizing:border-box;pointer-events:none;transition:color .18s ease,background .18s ease}
+.appShell .toggleLine::before,.appShell .switchLine::before{left:0;width:41px;content:"ON";color:#5c7083;background:#e7edf2;border:1px solid #9eafbf;border-right:0;border-radius:4px 0 0 4px}
+.appShell .toggleLine::after,.appShell .switchLine::after{left:41px;width:41px;content:"OFF";color:#334b63;background:#fff;border:1px solid #9eafbf;border-left:0;border-radius:0 4px 4px 0}
+.appShell .toggleLine:has(>input[type=checkbox]:checked)::before,.appShell .switchLine:has(>input[type=checkbox]:checked)::before{color:#fff;background:#0aa95f;border-color:#0aa95f}
+.appShell .toggleLine:has(>input[type=checkbox]:checked)::after,.appShell .switchLine:has(>input[type=checkbox]:checked)::after{color:#6f7f8e;background:#e7edf2;border-color:#0aa95f}
+.appShell .toggleLine:has(>input[type=checkbox]:focus-visible),.appShell .switchLine:has(>input[type=checkbox]:focus-visible){outline:2px solid #0b75d1;outline-offset:2px}
+.appShell .toggleLine:has(>input[type=checkbox]:disabled),.appShell .switchLine:has(>input[type=checkbox]:disabled){opacity:.55;cursor:not-allowed}
 .lockedMapPage,
 .lockedMapPage *{font-family:Arial,Helvetica,sans-serif!important}
 .lockedMapPage .mapVehicleIdentity{min-width:0!important}
 .lockedMapPage .mapVehicleIdentity>b{display:flex!important;align-items:flex-start!important;gap:6px!important;flex-wrap:wrap!important}
-.lockedMapPage .mapVehicleName{display:inline!important;max-width:none!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+.lockedMapPage .mapVehicleName{display:block!important;flex:1 1 auto!important;min-width:0!important;max-width:100%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+.lockedMapPage .mapVehicleMain{height:auto!important;min-height:88px!important;align-items:start!important}
 .lockedMapPage .mapVehicleBadge{flex:0 0 auto!important;white-space:nowrap!important}
 .lockedMapPage .statusCountStrip{overflow-x:auto!important;scrollbar-width:thin!important}
 .lockedMapPage .statusCountStrip button{flex:0 0 auto!important;white-space:nowrap!important}
@@ -335,3 +352,4 @@ body:has(.lockedMapPage) .appFooter{display:none!important}
 .appShell .statusCard .legend>div{min-height:79px;box-sizing:border-box}
 @media(max-width:900px){.appShell .statusCard .donutWrap{grid-template-columns:minmax(0,1fr);gap:18px;padding:18px 12px}.appShell .statusCard .legend{width:min(100%,420px);margin-inline:auto}}
 @media(max-width:420px){.appShell .statusCard .statusDonut{width:240px!important;height:240px!important}.appShell .statusCard .statusDonutCenter{inset:34px!important}}
+.lockedMapPage .vehicle-cluster-marker-wrap{background:transparent!important;border:0!important}.lockedMapPage .vehicle-cluster-marker{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#0b9955;color:#fff;border:3px solid #fff;box-shadow:0 4px 14px rgba(14,91,61,.35),0 0 0 5px rgba(12,163,99,.18);font-size:13px;font-weight:800;transition:transform .18s ease,box-shadow .18s ease}.lockedMapPage .vehicle-cluster-marker:hover{transform:scale(1.08);box-shadow:0 6px 18px rgba(14,91,61,.42),0 0 0 7px rgba(12,163,99,.2)}.lockedMapPage .vehicle-cluster-popup{display:grid;gap:4px;min-width:150px;color:#24425f}.lockedMapPage .vehicle-cluster-popup b{font-size:12px}.lockedMapPage .vehicle-cluster-popup small{font-size:10px;line-height:1.35}

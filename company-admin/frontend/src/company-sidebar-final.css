@@ -113,8 +113,9 @@
 .lockedMapPage .mapVehicleSignals>svg{width:20px!important;height:20px!important;color:#16a05d!important}
 .lockedMapPage .mapVehicleRow[data-state=offline] .mapVehicleSignals>svg{color:#94a3b8!important}
 .lockedMapPage .mapVehicleMenu{position:absolute!important;right:8px!important;top:50%!important;transform:translateY(-50%)!important;border:0!important;background:transparent!important;color:#183b59!important;font-size:24px!important;line-height:1!important;padding:4px!important}
-.lockedMapPage .mapVehicleIdentity b{display:flex!important;align-items:center!important;gap:10px!important}
-.lockedMapPage .mapVehicleName{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.lockedMapPage .mapVehicleIdentity b{display:flex!important;align-items:flex-start!important;gap:10px!important;flex-wrap:wrap!important}
+.lockedMapPage .mapVehicleName{display:block!important;flex:1 1 auto!important;min-width:0!important;max-width:none!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}
+.lockedMapPage .mapVehicleIdentity>b{padding-right:0!important;white-space:nowrap!important;overflow:visible!important}
 .lockedMapPage .mapVehicleBadge{display:inline-flex!important;flex:0 0 auto!important;padding:5px 10px!important;border-radius:8px!important;background:#e9edf2!important;color:#64748b!important;font-size:11px!important;font-style:normal!important;font-weight:750!important;text-transform:capitalize!important}
 .lockedMapPage .mapVehicleRow[data-state=moving] .mapVehicleBadge{background:#dbf9e4!important;color:#10a94b!important}
 .lockedMapPage .mapVehicleRow[data-state=idle] .mapVehicleBadge{background:#fff0d8!important;color:#d98200!important}
