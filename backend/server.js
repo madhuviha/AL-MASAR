@@ -163,6 +163,8 @@ const parseAttrs = v => {
   if (typeof v === 'object') return v;
   try { return JSON.parse(v); } catch { return {}; }
 };
+const booleanValue = value => [true,1,'1','true','on','ON'].includes(value) ? true : [false,0,'0','false','off','OFF'].includes(value) ? false : null;
+const rememberedIgnition = (attrs={},telemetry={}) => booleanValue(attrs.ignition ?? attrs.ignitionOn) ?? booleanValue(telemetry.stopIgnition ?? telemetry.ignition);
 const timeMs = value => { const t=new Date(value||0).getTime(); return Number.isFinite(t)?t:0; };
 const newestTimestamp = live => {
   // GPS fix and device clock times do not indicate a packet reached the server.
@@ -574,7 +576,7 @@ async function readLiveSnapshots(){
  const live=await readLiveSnapshotsRaw();const vs=(await pool.query('SELECT traccar_device_id,protocol,metadata FROM vehicles WHERE traccar_device_id IS NOT NULL')).rows;const profiles=new Map(vs.map(v=>[String(v.traccar_device_id),{protocol:v.protocol,mappings:v.metadata?.ioMappings||[]}]))
  return {...live,rows:live.rows.map(p=>{const profile=profiles.get(String(p.id))||{},raw=parseAttrs(p.attributes),normalized=normalizeProtocolAttributes(raw,profile.protocol||p.protocol);return {...mapDeviceTelemetry({...p,attributes:normalized},profile.mappings||[]),raw_decoded_attributes:raw}})};
 }
-function deriveStatus(live,metadata={}){
+function deriveStatus(live,metadata={},telemetry={}){
   if(!live) return 'offline';
   if(connectionStatus(live)==='offline') return 'offline';
   if(live.valid===false) return 'untracked';
@@ -583,10 +585,11 @@ function deriveStatus(live,metadata={}){
   // Tracker I/O values may arrive as booleans, numbers, or strings. Normalize
   // them before deriving the state so a stopped vehicle with ignition ON stays
   // Idle (for example while waiting at a red light), rather than Parked.
-  const ignitionOn=[true,1,'1','true','on','ON'].includes(attrs.ignition);
-  const ignitionOff=[false,0,'0','false','off','OFF'].includes(attrs.ignition);
-  const motionOn=[true,1,'1','true','on','ON'].includes(attrs.motion);
-  const motionOff=[false,0,'0','false','off','OFF'].includes(attrs.motion);
+  const ignition=rememberedIgnition(attrs,telemetry);
+  const ignitionOn=ignition===true;
+  const ignitionOff=ignition===false;
+  const motionOn=booleanValue(attrs.motion ?? attrs.movement)===true;
+  const motionOff=booleanValue(attrs.motion ?? attrs.movement)===false;
   if((live.speed!=null && speedKph>minimum)||(live.speed==null&&motionOn)) return 'moving';
   if(speedKph<=minimum && ignitionOn) return 'idle';
   if(speedKph<=minimum && (ignitionOff||motionOff)) return 'parked';
@@ -610,9 +613,9 @@ async function vehicleSnapshotFor(user){
   const liveMap=new Map(liveRows.map(x=>[String(x.id),x])),detectedDrivers=await currentDrivers(pool,rows);
   const snapshots=rows.map(v=>{
     if(v.expired){delete v.derived_state;return {...v,expired:true,live_access:false,access_status:'expired',access_message:VEHICLE_RENEWAL_MESSAGE,access:{status:'expired',code:'vehicle_expired',liveTracking:false,canOpen:false,message:VEHICLE_RENEWAL_MESSAGE},telemetry:{},mapped_io:[],current_driver:unidentified(),driver_identifier:null,status:'expired',connection_status:'expired',device_status:'expired',live_source:'blocked',last_update:null,position_time:null,position_valid:null,fix_time:null,device_time:null,latitude:null,longitude:null,speed_kph:null,course:null,altitude:null,ignition:null,motion:null,attributes:{}}}
-    const l=liveMap.get(String(v.traccar_device_id)),attrs=parseAttrs(l?.attributes),telemetry=deriveTelemetry(l?{...l,attributes:attrs}:null,v.metadata,v.derived_state||{});delete v.derived_state;
+    const l=liveMap.get(String(v.traccar_device_id)),attrs=parseAttrs(l?.attributes),telemetry=deriveTelemetry(l?{...l,attributes:attrs}:null,v.metadata,v.derived_state||{}),effectiveIgnition=rememberedIgnition(attrs,telemetry);delete v.derived_state;
     const location=resolveLivePosition(l),speedKph=location.source==='current'&&l?.speed!=null?Number((Number(l.speed||0)*1.852).toFixed(1)):null;
-    return {...v,expired:false,live_access:true,access_status:'active',access_message:'',access:{status:'active',code:null,liveTracking:true,canOpen:true,message:''},telemetry,mapped_io:l?.mapped_io||[],current_driver:detectedDrivers.get(String(v.id))||unidentified(),driver_identifier:detectedDrivers.get(String(v.id))?.identifier||null,status:deriveStatus(l,v.metadata),connection_status:connectionStatus(l),device_status:l?.status||'unknown',live_source:source,location_source:location.source,last_update:newestTimestamp(l),position_time:location.serverTime,position_valid:l?.valid??null,fix_time:location.fixTime,device_time:location.deviceTime,latitude:location.latitude,longitude:location.longitude,speed_kph:speedKph,course:location.course,altitude:location.altitude,ignition:typeof attrs.ignition==='boolean'?attrs.ignition:null,motion:typeof attrs.motion==='boolean'?attrs.motion:null,attributes:attrs};
+    return {...v,expired:false,live_access:true,access_status:'active',access_message:'',access:{status:'active',code:null,liveTracking:true,canOpen:true,message:''},telemetry,mapped_io:l?.mapped_io||[],current_driver:detectedDrivers.get(String(v.id))||unidentified(),driver_identifier:detectedDrivers.get(String(v.id))?.identifier||null,status:deriveStatus(l,v.metadata,telemetry),connection_status:connectionStatus(l),device_status:l?.status||'unknown',live_source:source,location_source:location.source,last_update:newestTimestamp(l),position_time:location.serverTime,position_valid:l?.valid??null,fix_time:location.fixTime,device_time:location.deviceTime,latitude:location.latitude,longitude:location.longitude,speed_kph:speedKph,course:location.course,altitude:location.altitude,ignition:effectiveIgnition,motion:booleanValue(attrs.motion ?? attrs.movement),attributes:effectiveIgnition===null?attrs:{...attrs,ignition:effectiveIgnition}};
   });
   const cachedAddresses=await reverseGeocoder.cachedMany(snapshots);
   return Promise.all(snapshots.map(async snapshot=>{

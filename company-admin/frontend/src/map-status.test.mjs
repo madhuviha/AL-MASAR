@@ -33,6 +33,12 @@ test('ignition from the vehicle snapshot is used when position attributes are em
  assert.equal(status.group,'idle');
 });
 
+test('last confirmed ignition is retained when a heartbeat omits ignition',()=>{
+ const now=Date.now();
+ const status=mapStatus({device:{lastUpdate:new Date(now-30000).toISOString()},telemetry:{stopIgnition:true},position:{valid:true,latitude:25.2,longitude:51.5,serverTime:new Date(now-30000).toISOString(),speed:0,attributes:{}}},{offlineMinutes:300},now);
+ assert.equal(status.group,'idle');
+});
+
 test('latest communication prefers a fresh heartbeat over an older GPS position',()=>{
  const now=Date.now();
  const heartbeat=new Date(now-3*60000).toISOString();

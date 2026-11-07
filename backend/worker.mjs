@@ -1,5 +1,5 @@
 import {recentAlerts} from './alert-retention.mjs';
-import {deriveTelemetry} from './telemetry.mjs';
+import {deriveTelemetry,telemetryBool} from './telemetry.mjs';
 import {evaluateAlerts} from './rules.mjs';
 export function startRuleWorker({pool,readLiveSnapshots,parseAttrs}){
  let busy=false,lastPurge=0;
@@ -22,11 +22,12 @@ export function startRuleWorker({pool,readLiveSnapshots,parseAttrs}){
    const vehicles=vs.rows.map(v=>{const l=map.get(String(v.traccar_device_id)),a=parseAttrs(l?.attributes),time=new Date(Math.max(...[l?.servertime,l?.serverTime,l?.lastupdate,l?.lastUpdate].map(x=>Date.parse(x)).filter(Number.isFinite),0)).toISOString(),age=Date.now()-Date.parse(time);let speed=l?.speed==null?null:Number(l.speed)*1.852;
     const fresh=Number.isFinite(age)&&age>=-60000&&age<=Math.max(1,Number(settings.offlineMinutes)||300)*60000;
     const telemetry=deriveTelemetry(l?{...l,attributes:a}:null,v.metadata,telemetryRuntime[v.id]);if(telemetry.fresh||telemetry.ignitionSampleTime)telemetryRuntime[v.id]=telemetry;
+    const ignition=telemetryBool(a.ignition??a.ignitionOn)??telemetryBool(telemetry.stopIgnition??telemetry.ignition),motion=telemetryBool(a.motion??a.movement);
     const fixAge=l?.fixtime||l?.fixTime?Date.now()-Date.parse(l.fixtime||l.fixTime):null;
     const gpsOff=/gps\s*:\s*off/i.test(String(a.result||''));
     const signalFresh=l?.valid!==false&&Number.isFinite(age)&&age<=Math.min(Math.max(1,Number(settings.offlineMinutes)||300)*60000,120000)&&!gpsOff&&(!Number.isFinite(fixAge)||fixAge<=120000);
     if(l?.valid===false)speed=null;
-    return {...v,telemetry,position:l?{latitude:l.latitude,longitude:l.longitude,valid:l.valid,serverTime:time,attributes:a}:null,speed,state:!fresh?'offline':signalFresh&&((l?.speed!=null&&speed>Math.max(0,Number(v.metadata?.accuracy?.minMovingSpeed??3)))||[true,1,'1','true'].includes(a.motion))?'moving':signalFresh&&[true,1,'1','true'].includes(a.ignition)?'idle':'parked'};
+    return {...v,telemetry,position:l?{latitude:l.latitude,longitude:l.longitude,valid:l.valid,serverTime:time,attributes:{...a,...(ignition===null?{}:{ignition})}}:null,speed,state:!fresh?'offline':signalFresh&&((l?.speed!=null&&speed>Math.max(0,Number(v.metadata?.accuracy?.minMovingSpeed??3)))||motion===true)?'moving':signalFresh&&ignition===true?'idle':'parked'};
    });
    const normalized={...data,...runtime.rows[0]?.data};for(const key of ['drivers','alerts','alertRules','localGeofences'])normalized[key]=(data[key]||[]).map(x=>({...x,companyId:co.id}));
    const next=evaluateAlerts(normalized,company,vehicles);next.alerts=recentAlerts(next.alerts);
