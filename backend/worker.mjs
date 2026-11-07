@@ -27,7 +27,9 @@ export function startRuleWorker({pool,readLiveSnapshots,parseAttrs}){
     const gpsOff=/gps\s*:\s*off/i.test(String(a.result||''));
     const signalFresh=l?.valid!==false&&Number.isFinite(age)&&age<=Math.min(Math.max(1,Number(settings.offlineMinutes)||300)*60000,120000)&&!gpsOff&&(!Number.isFinite(fixAge)||fixAge<=120000);
     if(l?.valid===false)speed=null;
-    return {...v,telemetry,position:l?{latitude:l.latitude,longitude:l.longitude,valid:l.valid,serverTime:time,attributes:{...a,...(ignition===null?{}:{ignition})}}:null,speed,state:!fresh?'offline':signalFresh&&((l?.speed!=null&&speed>Math.max(0,Number(v.metadata?.accuracy?.minMovingSpeed??3)))||motion===true)?'moving':signalFresh&&ignition===true?'idle':'parked'};
+    const minimum=Math.max(0,Number(v.metadata?.accuracy?.minMovingSpeed??3));
+    const moving=l?.speed!=null?speed>minimum:motion===true;
+    return {...v,telemetry,position:l?{latitude:l.latitude,longitude:l.longitude,valid:l.valid,serverTime:time,attributes:{...a,...(ignition===null?{}:{ignition})}}:null,speed,state:!fresh?'offline':signalFresh&&moving?'moving':signalFresh&&ignition===true?'idle':'parked'};
    });
    const normalized={...data,...runtime.rows[0]?.data};for(const key of ['drivers','alerts','alertRules','localGeofences'])normalized[key]=(data[key]||[]).map(x=>({...x,companyId:co.id}));
    const next=evaluateAlerts(normalized,company,vehicles);next.alerts=recentAlerts(next.alerts);

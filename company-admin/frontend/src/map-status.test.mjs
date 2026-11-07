@@ -39,6 +39,12 @@ test('last confirmed ignition is retained when a heartbeat omits ignition',()=>{
  assert.equal(status.group,'idle');
 });
 
+test('zero speed is authoritative over a stale motion flag',()=>{
+ const now=Date.now();
+ const status=mapStatus({device:{lastUpdate:new Date(now-30000).toISOString()},position:{valid:true,latitude:25.2,longitude:51.5,serverTime:new Date(now-30000).toISOString(),speed:0,attributes:{ignition:false,motion:true}}},{offlineMinutes:300},now);
+ assert.equal(status.group,'parked');
+});
+
 test('latest communication prefers a fresh heartbeat over an older GPS position',()=>{
  const now=Date.now();
  const heartbeat=new Date(now-3*60000).toISOString();
